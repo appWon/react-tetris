@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, KeyboardEvent } from "react";
 
 import { INIT_BLOCK_CENTER } from "../../constants";
 
@@ -12,17 +12,27 @@ import { Cell } from "../Cell";
 import * as S from "./blockBoard";
 
 export const BlockBoard = () => {
-    const [position, setPosition] = useState({ x: INIT_BLOCK_CENTER, y: 0 });
+    const [gameState, setGameState] = useState<"playing" | "stop">("stop");
+    const [position, setPosition] = useState({ x: INIT_BLOCK_CENTER, y: 18 });
     const [renderBlock, currentBLock, floorBlock, setBlock] =
         useBlockState(position);
 
     useEffect(() => {
+        if (gameState === "stop") return;
+
         const interval = setInterval(() => {
             setPosition((positionValue) => {
                 return { ...positionValue, y: positionValue.y + 1 };
             });
         }, 1000);
 
+        return () => {
+            console.log(1);
+            clearInterval(interval);
+        };
+    }, [floorBlock, gameState]);
+
+    useEffect(() => {
         if (currentBLock.length + position.y >= 24) {
             setBlock();
             setPosition({ x: 5, y: 0 });
@@ -48,14 +58,25 @@ export const BlockBoard = () => {
                     }
                 }
             }
-
-        return () => {
-            clearInterval(interval);
-        };
     }, [floorBlock, position]);
 
+    const handleKeyUp = ({ key }: KeyboardEvent<HTMLDivElement>) => {
+        if (key === "ArrowLeft") {
+            setPosition({ ...position, x: position.x - 1 });
+        } else if (key === "ArrowRight") {
+            setPosition({ ...position, x: position.x + 1 });
+        }
+    };
+
+    const handleClickGameStart = () => {
+        setGameState("playing");
+    };
+
     return (
-        <S.BlockBoardContainer>
+        <S.BlockBoardContainer
+            tabIndex={0}
+            onKeyUp={(v) => v && handleKeyUp(v)}
+        >
             {renderBlock().map((v, columnCnt) => (
                 <S.RowCoinatiner key={`column_${columnCnt}`}>
                     {v.map((v, rowCnt) => (
@@ -63,6 +84,7 @@ export const BlockBoard = () => {
                     ))}
                 </S.RowCoinatiner>
             ))}
+            <button onClick={handleClickGameStart}>버튼</button>
         </S.BlockBoardContainer>
     );
 };
