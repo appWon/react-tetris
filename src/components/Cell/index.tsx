@@ -5,7 +5,7 @@ import * as S from "./style";
 
 export interface CellProps {
     color: string;
-    state: "fixed" | "drawing";
+    state: "blank" | "fixed" | "drop" | "duplicated";
 }
 
 export const Cell = (props: CellProps) => {

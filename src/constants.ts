@@ -1,5 +1,5 @@
 // 초기 block 센터링
-export const INIT_BLOCK_CENTER = 5;
+export const INIT_POSITION = { x: 5, y: 0 };
 
 // 테트리스 가로세로 크기
 export const ROW = 24;
