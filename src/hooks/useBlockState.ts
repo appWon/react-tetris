@@ -1,77 +1,156 @@
 import { useState, useEffect } from "react";
 
-import { ROW, COLUMN, BLOCK_LIST } from "../constants";
-
-interface UseBlockState {
-    x: number;
-    y: number;
-}
+import { ROW, COLUMN, BLOCK_LIST, INIT_POSITION } from "../constants";
 
 interface BlockType {
-    type: "blank" | "dropBlock";
+    color: string;
+    state: "blank" | "fixed" | "drop" | "duplicated";
 }
 
-export const useBlockState = (props: UseBlockState) => {
-    const [floorBlock, setFloorBlock] = useState<BlockType[][]>([]);
-    const [currentBLock, setCurrentBlock] = useState<BlockType[][]>([]);
+export const useBlockState = (gameState: "playing" | "stop") => {
+    const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
+    const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
+    const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
+    const [position, setPosition] = useState({ x: 5, y: 21 });
 
     useEffect(() => {
         const blockInitTalState = [...Array(COLUMN)].map((_) =>
-            [...Array(ROW)].fill(0)
+            [...Array(ROW)].fill({
+                color: "",
+                state: "blank",
+            })
         );
-        setFloorBlock(blockInitTalState);
+
+        setFixedBlock(blockInitTalState);
+        changeDropBlock();
     }, []);
 
     useEffect(() => {
-        const dropBlock: BlockType[][] = BLOCK_LIST[1].map((row) =>
-            row.map((_) => ({
-                type: "dropBlock",
-            }))
-        );
+        if (gameState === "stop") return;
 
-        setCurrentBlock(dropBlock);
-    }, []);
+        const interval = setInterval(() => {
+            setPosition(({ x, y }) => ({ x, y: y + 1 }));
+        }, 1000);
 
-    const rotateBlock = (arr: number[][]) => {
-        const temp: number[][] = [];
+        return () => {
+            clearInterval(interval);
+        };
+    }, [gameState, position.y]);
 
-        for (let row = 0; row < arr.length; row++) {
-            temp[row] = [];
-            for (let column = 0; column < arr[0].length; column++) {
-                // if (position === "right")
-                temp[row][column] = arr[arr.length - 1 - column][row];
-                // else
-                // temp[row][column] =
-                //     arr[arr.length - 1 - row][arr.length - 1 - column];
+    useEffect(() => {
+        if (position.y + dropBlock.length >= ROW) {
+            fixToGrid(renderBlock);
+            setPosition(INIT_POSITION);
+            return;
+        }
+
+        const renderingView = renderToGrid();
+
+        for (let i = 0; i < renderingView.length; i++) {
+            if (renderingView[i].some((v) => v.state === "duplicated")) {
+                fixToGrid(renderBlock);
+                setPosition(INIT_POSITION);
+                return;
             }
         }
 
-        return temp;
+        setRenderBlock(renderingView);
+    }, [position.y, position.x, fixedBlock]);
+
+    const changeDropBlock = () => {
+        const blockColor = randomColor();
+        const dropBlock = BLOCK_LIST[1].reduce<BlockType[][]>((pre, rowArr) => {
+            let blankCnt = rowArr.length;
+            const rows = rowArr.map<BlockType>((block) => {
+                // if (block === 0) blankCnt -= 1;
+                return block === 1
+                    ? {
+                          color: blockColor,
+                          state: "drop",
+                      }
+                    : {
+                          color: "",
+                          state: "blank",
+                      };
+            });
+            // return blankCnt > 0 ? [...pre, rows] : pre;
+            return [...pre, rows];
+        }, []);
+
+        setDropBlock(dropBlock);
     };
 
-    const renderBlock = () => {
-        const arrBlock: BlockType[][] = floorBlock.map((row) =>
-            row.map(({ type }) => ({
-                type: type !== "dropBlock" ? type : "blank",
+    const randomColor = (): string => {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
+
+    // const rotateBlock = (arr: number[][]) => {
+    //     const temp: number[][] = [];
+
+    //     for (let row = 0; row < arr.length; row++) {
+    //         temp[row] = [];
+    //         for (let column = 0; column < arr[0].length; column++) {
+    //             // if (position === "right")
+    //             temp[row][column] = arr[arr.length - 1 - column][row];
+    //             // else
+    //             // temp[row][column] =
+    //             //     arr[arr.length - 1 - row][arr.length - 1 - column];
+    //         }
+    //     }
+
+    //     return temp;
+    // };
+
+    const renderToGrid = () => {
+        const arrBlock: BlockType[][] = fixedBlock.map((row) =>
+            row.map((info) => ({
+                ...info,
+                state: info.state === "drop" ? "blank" : info.state,
             }))
         );
 
-        currentBLock.forEach((row, x) => {
-            row.forEach((_, y) => {
-                arrBlock[x + props.x][y + props.y].type = "dropBlock";
+        const { x, y } = position;
+
+        dropBlock.forEach((column, columnI) => {
+            column.forEach((value, rowI) => {
+                const blockValue = arrBlock[columnI + x][rowI + y];
+
+                let state = value.state;
+                let color = value.color;
+
+                if (blockValue.state === "fixed") {
+                    color = blockValue.color;
+                    state =
+                        value.state === "blank"
+                            ? blockValue.state
+                            : "duplicated";
+                }
+
+                arrBlock[columnI + x][rowI + y] = { color, state };
             });
         });
 
         return arrBlock;
     };
 
-    const setBlock = () => {
-        setFloorBlock(() => renderBlock());
+    const fixToGrid = (blockArr: BlockType[][]) => {
+        const fixedBlockArr = blockArr.map((column) =>
+            column.map((row) => {
+                return {
+                    ...row,
+                    state: row.state === "drop" ? "fixed" : row.state,
+                };
+            })
+        );
+
+        changeDropBlock();
+        setFixedBlock(fixedBlockArr);
     };
 
-    // const setLotateBlock = () => {
-    //     setCurrentBlock(rotateBlock(currentBLock));
-    // };
-
-    return [renderBlock, currentBLock, floorBlock, setBlock] as const;
+    return [renderBlock, setPosition] as const;
 };
