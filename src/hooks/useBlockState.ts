@@ -11,7 +11,7 @@ export const useBlockState = (gameState: "playing" | "stop") => {
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
     const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
-    const [position, setPosition] = useState({ x: 5, y: 21 });
+    const [position, setPosition] = useState(INIT_POSITION);
 
     useEffect(() => {
         const blockInitTalState = [...Array(COLUMN)].map((_) =>
@@ -38,7 +38,7 @@ export const useBlockState = (gameState: "playing" | "stop") => {
     }, [gameState, position.y]);
 
     useEffect(() => {
-        if (position.y + dropBlock.length >= ROW) {
+        if (position.y + dropBlock.length > ROW) {
             fixToGrid(renderBlock);
             setPosition(INIT_POSITION);
             return;
@@ -55,14 +55,12 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         }
 
         setRenderBlock(renderingView);
-    }, [position.y, position.x, fixedBlock]);
+    }, [position.y, position.x, dropBlock]);
 
     const changeDropBlock = () => {
         const blockColor = randomColor();
         const dropBlock = BLOCK_LIST[1].reduce<BlockType[][]>((pre, rowArr) => {
-            let blankCnt = rowArr.length;
             const rows = rowArr.map<BlockType>((block) => {
-                // if (block === 0) blankCnt -= 1;
                 return block === 1
                     ? {
                           color: blockColor,
@@ -73,7 +71,6 @@ export const useBlockState = (gameState: "playing" | "stop") => {
                           state: "blank",
                       };
             });
-            // return blankCnt > 0 ? [...pre, rows] : pre;
             return [...pre, rows];
         }, []);
 
@@ -115,6 +112,8 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         );
 
         const { x, y } = position;
+
+        console.log(dropBlock);
 
         dropBlock.forEach((column, columnI) => {
             column.forEach((value, rowI) => {
