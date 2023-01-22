@@ -44,7 +44,7 @@ export const useBlockState = (gameState: "playing" | "stop") => {
             return;
         }
 
-        const renderingView = renderToGrid();
+        const renderingView = renderToGrid(position);
 
         for (let i = 0; i < renderingView.length; i++) {
             if (renderingView[i].some((v) => v.state === "duplicated")) {
@@ -94,17 +94,13 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         setDropBlock(roateBLock90);
     };
 
-    const renderToGrid = () => {
+    const renderToGrid = ({ x, y }: { x: number; y: number }) => {
         const arrBlock: BlockType[][] = fixedBlock.map((row) =>
             row.map((info) => ({
                 ...info,
                 state: info.state === "drop" ? "blank" : info.state,
             }))
         );
-
-        const { x, y } = position;
-
-        console.log(dropBlock);
 
         dropBlock.forEach((column, columnI) => {
             column.forEach((value, rowI) => {
@@ -113,7 +109,7 @@ export const useBlockState = (gameState: "playing" | "stop") => {
                 let state = value.state;
                 let color = value.color;
 
-                if (blockValue.state === "fixed") {
+                if (blockValue?.state === "fixed") {
                     color = blockValue.color;
                     state =
                         value.state === "blank"
@@ -142,5 +138,34 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         setFixedBlock(fixedBlockArr);
     };
 
-    return [renderBlock, setPosition, setRotateDropBlock] as const;
+    const setDropToEnd = () => {
+        let y = ROW - dropBlock.length;
+
+        while (y > 0) {
+            let state = null;
+            const renderingView = renderToGrid({ ...position, y });
+
+            for (let i = 0; i < renderingView.length; i++) {
+                if (renderingView[i].some((v) => v.state === "duplicated")) {
+                    state = "duplicated";
+                    break;
+                }
+            }
+
+            if (state !== "duplicated") {
+                fixToGrid(renderingView);
+                setPosition(INIT_POSITION);
+                break;
+            } else {
+                y -= 1;
+            }
+        }
+    };
+
+    return [
+        renderBlock,
+        setPosition,
+        setRotateDropBlock,
+        setDropToEnd,
+    ] as const;
 };
