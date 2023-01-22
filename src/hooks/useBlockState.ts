@@ -86,22 +86,13 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         return color;
     };
 
-    // const rotateBlock = (arr: number[][]) => {
-    //     const temp: number[][] = [];
+    const setRotateDropBlock = (): void => {
+        const roateBLock90 = dropBlock[0].map((_, index) =>
+            dropBlock.map((row) => row[index]).reverse()
+        );
 
-    //     for (let row = 0; row < arr.length; row++) {
-    //         temp[row] = [];
-    //         for (let column = 0; column < arr[0].length; column++) {
-    //             // if (position === "right")
-    //             temp[row][column] = arr[arr.length - 1 - column][row];
-    //             // else
-    //             // temp[row][column] =
-    //             //     arr[arr.length - 1 - row][arr.length - 1 - column];
-    //         }
-    //     }
-
-    //     return temp;
-    // };
+        setDropBlock(roateBLock90);
+    };
 
     const renderToGrid = () => {
         const arrBlock: BlockType[][] = fixedBlock.map((row) =>
@@ -151,5 +142,5 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         setFixedBlock(fixedBlockArr);
     };
 
-    return [renderBlock, setPosition] as const;
+    return [renderBlock, setPosition, setRotateDropBlock] as const;
 };
