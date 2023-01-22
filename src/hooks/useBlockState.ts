@@ -102,24 +102,25 @@ export const useBlockState = (gameState: "playing" | "stop") => {
             }))
         );
 
-        dropBlock.forEach((column, columnI) => {
-            column.forEach((value, rowI) => {
-                const blockValue = arrBlock[columnI + x][rowI + y];
+        dropBlock
+            .filter((arr) => arr.some((v) => v.state === "drop"))
+            .forEach((column, columnI) => {
+                column.forEach((value, rowI) => {
+                    const blockValue = arrBlock[columnI + x][rowI + y];
+                    let state = value.state;
+                    let color = value.color;
 
-                let state = value.state;
-                let color = value.color;
+                    if (blockValue?.state === "fixed") {
+                        color = blockValue.color;
+                        state =
+                            value.state === "blank"
+                                ? blockValue.state
+                                : "duplicated";
+                    }
 
-                if (blockValue?.state === "fixed") {
-                    color = blockValue.color;
-                    state =
-                        value.state === "blank"
-                            ? blockValue.state
-                            : "duplicated";
-                }
-
-                arrBlock[columnI + x][rowI + y] = { color, state };
+                    arrBlock[columnI + x][rowI + y] = { color, state };
+                });
             });
-        });
 
         return arrBlock;
     };
