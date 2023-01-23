@@ -152,15 +152,11 @@ export const useBlockState = (gameState: "playing" | "stop") => {
                     break;
                 }
             }
-
-            if (state !== "duplicated") {
-                fixToGrid(renderingView);
-                setPosition(INIT_POSITION);
-                break;
-            } else {
-                y -= 1;
-            }
         }
+    };
+
+    const setDropOneBlock = () => {
+        setPosition(({ x, y }) => ({ x, y: y + 1 }));
     };
 
     return [
