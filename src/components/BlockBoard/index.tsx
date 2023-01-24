@@ -9,22 +9,23 @@ import { Cell } from "../Cell";
 // styled-component
 import * as S from "./blockBoard";
 
+type GameState = "playing" | "stop";
+
 export const BlockBoard = () => {
-    const [gameState, setGameState] = useState<"playing" | "stop">("stop");
+    const [gameState, setGameState] = useState<GameState>("stop");
     const [
-        position,
-        setMoveWidth,
         renderBlock,
-        setRotateDropBlock,
+        setMoveWidth,
         setDropToEnd,
         setDropOneBlock,
+        setRotateDropBlock,
     ] = useBlockState(gameState);
 
     const handleKeyUp = ({ code }: KeyboardEvent<HTMLDivElement>) => {
         if (code === "ArrowLeft") {
-            setMoveWidth({ ...position, x: position.x - 1 });
+            setMoveWidth(-1);
         } else if (code === "ArrowRight") {
-            setMoveWidth({ ...position, x: position.x + 1 });
+            setMoveWidth(1);
         } else if (code === "ArrowUp") {
             setRotateDropBlock();
         } else if (code === "ArrowDown") {

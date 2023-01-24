@@ -57,11 +57,18 @@ export const useBlockState = (gameState: GameState) => {
         setRenderBlock(renderingView);
     }, [position.y, dropBlock]);
 
-    const setMoveWidth = (width: rowWidth): void => {
-        if (width.x + dropBlock.length > 13 || width.x < 0) return;
-        else setPosition(width);
+    const setMoveWidth = (rightOrLeft: 1 | -1): void => {
+        if (
+            position.x + rightOrLeft + dropBlock.length > 13 ||
+            position.x + rightOrLeft < 0
+        ) {
+            return;
+        } else setPosition({ ...position, x: position.x + rightOrLeft });
 
-        const renderingView = renderToGrid(width);
+        const renderingView = renderToGrid({
+            ...position,
+            x: position.x + rightOrLeft,
+        });
 
         for (let i = 0; i < renderingView.length; i++) {
             if (renderingView[i].some((v) => v.state === "duplicated")) return;
@@ -196,11 +203,10 @@ export const useBlockState = (gameState: GameState) => {
     };
 
     return [
-        position,
-        setMoveWidth,
         renderBlock,
-        setRotateDropBlock,
+        setMoveWidth,
         setDropToEnd,
         setDropOneBlock,
+        setRotateDropBlock,
     ] as const;
 };
