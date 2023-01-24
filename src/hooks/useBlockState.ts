@@ -170,7 +170,7 @@ export const useBlockState = (gameState: GameState) => {
             position.x + filterBlankArr.length
         );
 
-        const find: number[] = filterBlankArr.map((row) => {
+        const findDropBlockArr: number[] = filterBlankArr.map((row) => {
             return (
                 row.length -
                 [...row].reverse().findIndex((obj) => obj.state === "drop")
@@ -179,10 +179,11 @@ export const useBlockState = (gameState: GameState) => {
 
         for (let i = 0; i < 24 - dropBlock.length; i++) {
             if (
-                find
-                    .map((arrIdx, ii) => {
-                        return sliceBlock[ii][arrIdx + i].state === "fixed";
-                    })
+                findDropBlockArr
+                    .map(
+                        (arrIdx, sliceIdx) =>
+                            sliceBlock[sliceIdx][arrIdx + i].state === "fixed"
+                    )
                     .some((v) => v)
             ) {
                 fixToGrid(renderToGrid({ ...position, y: i }));
