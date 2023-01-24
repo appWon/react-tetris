@@ -79,20 +79,24 @@ export const useBlockState = (gameState: GameState) => {
 
     const changeDropBlock = (): void => {
         const blockColor = randomColor();
-        const dropBlock = BLOCK_LIST[1].reduce<BlockType[][]>((pre, rowArr) => {
-            const rows = rowArr.map<BlockType>((block) => {
-                return block === 1
-                    ? {
-                          color: blockColor,
-                          state: "drop",
-                      }
-                    : {
-                          color: "",
-                          state: "blank",
-                      };
-            });
-            return [...pre, rows];
-        }, []);
+        const randomBlock = Math.floor(Math.random() * 6);
+        const dropBlock = BLOCK_LIST[randomBlock].reduce<BlockType[][]>(
+            (pre, rowArr) => {
+                const rows = rowArr.map<BlockType>((block) => {
+                    return block === 1
+                        ? {
+                              color: blockColor,
+                              state: "drop",
+                          }
+                        : {
+                              color: "",
+                              state: "blank",
+                          };
+                });
+                return [...pre, rows];
+            },
+            []
+        );
 
         setDropBlock(dropBlock);
     };
