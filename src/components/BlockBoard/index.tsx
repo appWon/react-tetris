@@ -12,8 +12,9 @@ import * as S from "./blockBoard";
 export const BlockBoard = () => {
     const [gameState, setGameState] = useState<"playing" | "stop">("stop");
     const [
+        position,
+        setMoveWidth,
         renderBlock,
-        setPosition,
         setRotateDropBlock,
         setDropToEnd,
         setDropOneBlock,
@@ -21,9 +22,9 @@ export const BlockBoard = () => {
 
     const handleKeyUp = ({ code }: KeyboardEvent<HTMLDivElement>) => {
         if (code === "ArrowLeft") {
-            setPosition(({ x, y }) => ({ x: x - 1, y }));
+            setMoveWidth({ ...position, x: position.x - 1 });
         } else if (code === "ArrowRight") {
-            setPosition(({ x, y }) => ({ x: x + 1, y }));
+            setMoveWidth({ ...position, x: position.x + 1 });
         } else if (code === "ArrowUp") {
             setRotateDropBlock();
         } else if (code === "ArrowDown") {

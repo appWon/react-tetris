@@ -7,7 +7,10 @@ interface BlockType {
     state: "blank" | "fixed" | "drop" | "duplicated";
 }
 
-export const useBlockState = (gameState: "playing" | "stop") => {
+type GameState = "playing" | "stop";
+type rowWidth = { x: number; y: number };
+
+export const useBlockState = (gameState: GameState) => {
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
     const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
@@ -55,7 +58,23 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         }
 
         setRenderBlock(renderingView);
-    }, [position.y, position.x, dropBlock]);
+    }, [position.y, dropBlock]);
+
+    const setMoveWidth = (width: rowWidth) => {
+        console.log(width);
+        if (width.x + dropBlock.length > 13 || width.x < 0) return;
+
+        const renderingView = renderToGrid(width);
+
+        for (let i = 0; i < renderingView.length; i++) {
+            if (renderingView[i].some((v) => v.state === "duplicated")) {
+                return;
+            }
+        }
+
+        setPosition(width);
+        setRenderBlock(renderingView);
+    };
 
     const changeDropBlock = () => {
         const blockColor = randomColor();
@@ -184,8 +203,9 @@ export const useBlockState = (gameState: "playing" | "stop") => {
     };
 
     return [
+        position,
+        setMoveWidth,
         renderBlock,
-        setPosition,
         setRotateDropBlock,
         setDropToEnd,
         setDropOneBlock,
