@@ -140,22 +140,46 @@ export const useBlockState = (gameState: "playing" | "stop") => {
     };
 
     const setDropToEnd = () => {
-        let y = ROW - dropBlock.length;
+        const filterBlankArr = dropBlock.filter((arr) =>
+            arr.some((v) => v.state === "drop")
+        );
 
-        while (y > 0) {
-            let state = null;
-            const renderingView = renderToGrid({ ...position, y });
+        const sliceBlock = renderBlock.slice(
+            position.x,
+            position.x + filterBlankArr.length
+        );
 
-            for (let i = 0; i < renderingView.length; i++) {
-                if (renderingView[i].some((v) => v.state === "duplicated")) {
-                    state = "duplicated";
-                    break;
-                }
+        const find: number[] = filterBlankArr.map((row) => {
+            return (
+                row.length -
+                row.reverse().findIndex((obj) => obj.state === "drop")
+            );
+        });
+
+        for (let i = 0; i < 24 - dropBlock.length; i++) {
+            if (
+                find
+                    .map((arrIdx, ii) => {
+                        return sliceBlock[ii][arrIdx + i].state === "fixed";
+                    })
+                    .some((v) => v)
+            ) {
+                fixToGrid(renderToGrid({ ...position, y: i }));
+                setPosition(INIT_POSITION);
+                return;
             }
         }
+
+        const renderArr = renderToGrid({
+            ...position,
+            y: 24 - dropBlock.length,
+        });
+
+        fixToGrid(renderArr);
+        setPosition(INIT_POSITION);
     };
 
-    const setDropOneBlock = () => {
+    const setDropOneBlock = (): void => {
         setPosition(({ x, y }) => ({ x, y: y + 1 }));
     };
 
@@ -164,5 +188,6 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         setPosition,
         setRotateDropBlock,
         setDropToEnd,
+        setDropOneBlock,
     ] as const;
 };
