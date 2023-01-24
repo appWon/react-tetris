@@ -14,18 +14,17 @@ export const useBlockState = (gameState: GameState) => {
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
     const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
-    const [position, setPosition] = useState(INIT_POSITION);
+    const [position, setPosition] = useState<rowWidth>(INIT_POSITION);
 
     useEffect(() => {
-        const blockInitTalState = [...Array(COLUMN)].map((_) =>
+        const blockInitTalState = [...Array(COLUMN)].map<BlockType[]>((_) =>
             [...Array(ROW)].fill({
                 color: "",
                 state: "blank",
             })
         );
 
-        setFixedBlock(blockInitTalState);
-        changeDropBlock();
+        fixToGrid(blockInitTalState);
     }, []);
 
     useEffect(() => {
@@ -43,7 +42,6 @@ export const useBlockState = (gameState: GameState) => {
     useEffect(() => {
         if (position.y + dropBlock.length > ROW) {
             fixToGrid(renderBlock);
-            setPosition(INIT_POSITION);
             return;
         }
 
@@ -52,7 +50,6 @@ export const useBlockState = (gameState: GameState) => {
         for (let i = 0; i < renderingView.length; i++) {
             if (renderingView[i].some((v) => v.state === "duplicated")) {
                 fixToGrid(renderBlock);
-                setPosition(INIT_POSITION);
                 return;
             }
         }
@@ -60,23 +57,20 @@ export const useBlockState = (gameState: GameState) => {
         setRenderBlock(renderingView);
     }, [position.y, dropBlock]);
 
-    const setMoveWidth = (width: rowWidth) => {
-        console.log(width);
+    const setMoveWidth = (width: rowWidth): void => {
         if (width.x + dropBlock.length > 13 || width.x < 0) return;
+        else setPosition(width);
 
         const renderingView = renderToGrid(width);
 
         for (let i = 0; i < renderingView.length; i++) {
-            if (renderingView[i].some((v) => v.state === "duplicated")) {
-                return;
-            }
+            if (renderingView[i].some((v) => v.state === "duplicated")) return;
         }
 
-        setPosition(width);
         setRenderBlock(renderingView);
     };
 
-    const changeDropBlock = () => {
+    const changeDropBlock = (): void => {
         const blockColor = randomColor();
         const dropBlock = BLOCK_LIST[1].reduce<BlockType[][]>((pre, rowArr) => {
             const rows = rowArr.map<BlockType>((block) => {
@@ -113,7 +107,7 @@ export const useBlockState = (gameState: GameState) => {
         setDropBlock(roateBLock90);
     };
 
-    const renderToGrid = ({ x, y }: { x: number; y: number }) => {
+    const renderToGrid = ({ x, y }: rowWidth): BlockType[][] => {
         const arrBlock: BlockType[][] = fixedBlock.map((row) =>
             row.map((info) => ({
                 ...info,
@@ -144,7 +138,7 @@ export const useBlockState = (gameState: GameState) => {
         return arrBlock;
     };
 
-    const fixToGrid = (blockArr: BlockType[][]) => {
+    const fixToGrid = (blockArr: BlockType[][]): void => {
         const fixedBlockArr = blockArr.map((column) =>
             column.map((row) => {
                 return {
@@ -155,10 +149,11 @@ export const useBlockState = (gameState: GameState) => {
         );
 
         changeDropBlock();
+        setPosition(INIT_POSITION);
         setFixedBlock(fixedBlockArr);
     };
 
-    const setDropToEnd = () => {
+    const setDropToEnd = (): void => {
         const filterBlankArr = dropBlock.filter((arr) =>
             arr.some((v) => v.state === "drop")
         );
@@ -184,7 +179,6 @@ export const useBlockState = (gameState: GameState) => {
                     .some((v) => v)
             ) {
                 fixToGrid(renderToGrid({ ...position, y: i }));
-                setPosition(INIT_POSITION);
                 return;
             }
         }
@@ -195,7 +189,6 @@ export const useBlockState = (gameState: GameState) => {
         });
 
         fixToGrid(renderArr);
-        setPosition(INIT_POSITION);
     };
 
     const setDropOneBlock = (): void => {

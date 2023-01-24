@@ -8,8 +8,8 @@ export const COLUMN = 12;
 // 블록 모양
 export const BLOCK_LIST = [
     [
-        [1, 1, 1, 1],
         [0, 0, 0, 0],
+        [1, 1, 1, 1],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
     ],

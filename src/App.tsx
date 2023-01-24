@@ -1,13 +1,12 @@
-import { useState } from 'react'
+// component
+import { BlockBoard } from "./components/BlockBoard";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div>
-      {count}
-    </div>
-  )
+    return (
+        <div>
+            <BlockBoard />
+        </div>
+    );
 }
 
-export default App
+export default App;
