@@ -152,7 +152,7 @@ export const useBlockState = (gameState: "playing" | "stop") => {
         const find: number[] = filterBlankArr.map((row) => {
             return (
                 row.length -
-                row.reverse().findIndex((obj) => obj.state === "drop")
+                [...row].reverse().findIndex((obj) => obj.state === "drop")
             );
         });
 
