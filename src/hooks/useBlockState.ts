@@ -40,7 +40,12 @@ export const useBlockState = (gameState: GameState) => {
     }, [gameState, position.y]);
 
     useEffect(() => {
-        if (position.y + dropBlock.length > ROW) {
+        const maxSize = dropBlock.reduce(
+            (m, row) => (m < row.length ? row.length : m),
+            0
+        );
+
+        if (position.y + maxSize > ROW) {
             fixToGrid(renderBlock);
             return;
         }
