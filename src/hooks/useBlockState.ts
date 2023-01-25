@@ -59,11 +59,11 @@ export const useBlockState = (gameState: GameState) => {
 
     const setMoveWidth = (rightOrLeft: 1 | -1): void => {
         if (
-            position.x + rightOrLeft + dropBlock.length > 13 ||
+            position.x + rightOrLeft + dropBlock.length >= 13 ||
             position.x + rightOrLeft < 0
         ) {
             return;
-        } else setPosition({ ...position, x: position.x + rightOrLeft });
+        }
 
         const renderingView = renderToGrid({
             ...position,
@@ -74,6 +74,7 @@ export const useBlockState = (gameState: GameState) => {
             if (renderingView[i].some((v) => v.state === "duplicated")) return;
         }
 
+        setPosition({ ...position, x: position.x + rightOrLeft });
         setRenderBlock(renderingView);
     };
 
