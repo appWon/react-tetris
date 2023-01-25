@@ -81,8 +81,9 @@ export const useBlockState = (gameState: GameState) => {
     const changeDropBlock = (): void => {
         const blockColor = randomColor();
         const randomBlock = Math.floor(Math.random() * 6);
-        const dropBlock = BLOCK_LIST[randomBlock].reduce<BlockType[][]>(
-            (pre, rowArr) => {
+        const dropBlock = BLOCK_LIST[randomBlock]
+            .filter((arr) => arr.some((v) => v))
+            .reduce<BlockType[][]>((pre, rowArr) => {
                 const rows = rowArr.map<BlockType>((block) => {
                     return block === 1
                         ? {
@@ -95,9 +96,7 @@ export const useBlockState = (gameState: GameState) => {
                           };
                 });
                 return [...pre, rows];
-            },
-            []
-        );
+            }, []);
 
         setDropBlock(dropBlock);
     };
@@ -166,23 +165,16 @@ export const useBlockState = (gameState: GameState) => {
     };
 
     const setDropToEnd = (): void => {
-        const filterBlankArr = dropBlock.filter((arr) =>
-            arr.some((v) => v.state === "drop")
-        );
-
-        const sliceBlock = renderBlock.slice(
-            position.x,
-            position.x + filterBlankArr.length
-        );
-
-        const findDropBlockArr: number[] = filterBlankArr.map((row) => {
+        const { x } = position;
+        const sliceBlock = renderBlock.slice(x, x + dropBlock.length);
+        const findDropBlockArr: number[] = dropBlock.map((row) => {
             return (
                 row.length -
                 [...row].reverse().findIndex((obj) => obj.state === "drop")
             );
         });
 
-        for (let i = 0; i < 24 - dropBlock.length; i++) {
+        for (let i = 0; i < 24 - Math.max(...findDropBlockArr); i++) {
             if (
                 findDropBlockArr
                     .map(
@@ -191,14 +183,14 @@ export const useBlockState = (gameState: GameState) => {
                     )
                     .some((v) => v)
             ) {
-                fixToGrid(renderToGrid({ ...position, y: i }));
+                fixToGrid(renderToGrid({ x, y: i }));
                 return;
             }
         }
 
         const renderArr = renderToGrid({
-            ...position,
-            y: 24 - dropBlock.length,
+            x,
+            y: 24 - Math.max(...findDropBlockArr),
         });
 
         fixToGrid(renderArr);
