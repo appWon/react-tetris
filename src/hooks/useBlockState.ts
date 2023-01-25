@@ -111,6 +111,16 @@ export const useBlockState = (gameState: GameState) => {
     };
 
     const setRotateDropBlock = (): void => {
+        const { x, y } = position;
+
+        if (dropBlock.length <= 2 && x + dropBlock.length === 12) {
+            if (dropBlock.length === 2) {
+                setPosition({ y, x: x - 1 });
+            } else {
+                setPosition({ y, x: x - 3 });
+            }
+        }
+
         const roateBLock90 = dropBlock[0].map((_, index) =>
             dropBlock.map((row) => row[index]).reverse()
         );
