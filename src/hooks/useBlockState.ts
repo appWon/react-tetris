@@ -166,13 +166,32 @@ export const useBlockState = (gameState: GameState) => {
 
     const fixToGrid = (blockArr: BlockType[][]): void => {
         const fixedBlockArr = blockArr.map((column) =>
-            column.map((row) => {
-                return {
-                    ...row,
-                    state: row.state === "drop" ? "fixed" : row.state,
-                };
-            })
+            column.map((row) => ({
+                ...row,
+                state: row.state === "drop" ? "fixed" : row.state,
+            }))
         );
+
+        for (let row = 0; row < ROW; row++) {
+            let lineIsFull = true;
+
+            for (let column = 0; column < COLUMN; column++) {
+                if (fixedBlockArr[column][row].state === "blank") {
+                    lineIsFull = false;
+                    break;
+                }
+            }
+
+            if (lineIsFull) {
+                for (let column = 0; column < COLUMN; column++) {
+                    fixedBlockArr[column].splice(row, 1);
+                    fixedBlockArr[column].unshift({
+                        color: "",
+                        state: "blank",
+                    });
+                }
+            }
+        }
 
         changeDropBlock();
         setPosition(INIT_POSITION);
