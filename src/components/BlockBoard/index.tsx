@@ -1,4 +1,5 @@
 import { useState, KeyboardEvent } from "react";
+import { LEFT_OR_RIGHT } from "../../constants";
 
 // hooks
 import { useBlockState } from "../../hooks/useBlockState";
@@ -23,9 +24,9 @@ export const BlockBoard = () => {
 
     const handleKeyUp = ({ code }: KeyboardEvent<HTMLDivElement>) => {
         if (code === "ArrowLeft") {
-            setMoveWidth(-1);
+            setMoveWidth(LEFT_OR_RIGHT.left);
         } else if (code === "ArrowRight") {
-            setMoveWidth(1);
+            setMoveWidth(LEFT_OR_RIGHT.right);
         } else if (code === "ArrowUp") {
             setRotateDropBlock();
         } else if (code === "ArrowDown") {

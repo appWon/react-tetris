@@ -43,3 +43,9 @@ export const BLOCK_LIST = [
         [1, 1],
     ],
 ];
+
+// 좌우 이동 상수
+export const LEFT_OR_RIGHT = {
+    left: -1,
+    right: 1,
+} as const;
