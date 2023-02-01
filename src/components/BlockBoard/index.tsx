@@ -6,11 +6,11 @@ import { useBlockState } from "../../hooks/useBlockState";
 
 // component
 import { Cell } from "../Cell";
+import { Button } from "../Button";
 
 // styled-component
 import * as S from "./blockBoard";
-
-export type GameState = "playing" | "stop" | "end";
+import { GameState } from "../../types";
 
 export const BlockBoard = () => {
     const [gameState, setGameState] = useState<GameState>("stop");
@@ -54,12 +54,9 @@ export const BlockBoard = () => {
                     ))}
                 </S.RowCoinatiner>
             ))}
-            <button
-                onClick={handleClickGameStart}
-                style={{ width: 100, height: 100 }}
-            >
-                버튼
-            </button>
+            {gameState !== "playing" && (
+                <Button onClick={handleClickGameStart} gameState={gameState} />
+            )}
         </S.BlockBoardContainer>
     );
 };
