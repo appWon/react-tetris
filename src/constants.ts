@@ -1,3 +1,5 @@
+import { BlockType } from "./types";
+
 // 초기 block 센터링
 export const INIT_POSITION = { x: 5, y: 0 };
 
@@ -49,3 +51,9 @@ export const LEFT_OR_RIGHT = {
     left: -1,
     right: 1,
 } as const;
+
+// 테트리슽 타일 상수
+export const CellState: BlockType = {
+    color: "",
+    state: "blank",
+};
