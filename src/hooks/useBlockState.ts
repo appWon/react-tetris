@@ -5,19 +5,14 @@ import {
     COLUMN,
     BLOCK_LIST,
     INIT_POSITION,
-    LEFT_OR_RIGHT,
+    CellState,
 } from "../constants";
 
-interface BlockType {
-    color: string;
-    state: "blank" | "fixed" | "drop" | "duplicated";
-}
+// type
+import { GameState } from "../components/BlockBoard";
+import { BlockType, RowWidth, LeftOrRight } from "../types";
 
-type GameState = "playing" | "stop";
-type RowWidth = { x: number; y: number };
-type LeftOrRight = typeof LEFT_OR_RIGHT[keyof typeof LEFT_OR_RIGHT];
-
-export const useBlockState = (gameState: GameState) => {
+export const useBlockState = (gameState: GameState, setGameState: any) => {
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
     const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
@@ -28,20 +23,17 @@ export const useBlockState = (gameState: GameState) => {
      */
     useEffect(() => {
         const blockInitTalState = [...Array(COLUMN)].map<BlockType[]>((_) =>
-            [...Array(ROW)].fill({
-                color: "",
-                state: "blank",
-            })
+            [...Array(ROW)].fill(CellState)
         );
 
         fixToGrid(blockInitTalState);
-    }, []);
+    }, [gameState]);
 
     /**
      * 테트리스 1초마다 y축 1씩 떨어트리는 Hook
      */
     useEffect(() => {
-        if (gameState === "stop") return;
+        if (gameState !== "playing") return;
 
         const interval = setInterval(() => {
             setPosition(({ x, y }) => ({ x, y: y + 1 }));
@@ -60,6 +52,8 @@ export const useBlockState = (gameState: GameState) => {
      * 3. 증복 블럭이 없다면 테트리스 렌더링 타일로 등록
      */
     useEffect(() => {
+        if (gameState === "end") "";
+
         const blockHeight = dropBlock[0]?.length || 0;
 
         if (position.y + blockHeight > ROW) {
@@ -67,19 +61,23 @@ export const useBlockState = (gameState: GameState) => {
             return;
         }
 
-        const renderArr = renderToGrid(position);
-
-        console.log(renderArr);
+        const renderArr =
+            gameState === "end" ? endGame() : renderToGrid(position);
 
         for (let i = 0; i < renderArr.length; i++) {
             if (renderArr[i].some((v) => v.state === "duplicated")) {
+                if (position.y === 0) {
+                    setGameState("end");
+                    return;
+                }
+
                 fixToGrid(renderBlock);
                 return;
             }
         }
 
         setRenderBlock(renderArr);
-    }, [position.y, dropBlock]);
+    }, [position.y, dropBlock, fixedBlock]);
 
     /**
      * 떨어지는 블록 좌우 이동시 실행 함수
@@ -117,6 +115,8 @@ export const useBlockState = (gameState: GameState) => {
      * 4. 떨어지는 블록(DropBlock)에 상태 적용
      */
     const changeDropBlock = (): void => {
+        if (gameState !== "playing") return;
+
         const blockColor = randomColor();
         const randomBlock = Math.floor(Math.random() * BLOCK_LIST.length);
         const dropBlock = BLOCK_LIST[randomBlock]
@@ -128,10 +128,7 @@ export const useBlockState = (gameState: GameState) => {
                               color: blockColor,
                               state: "drop",
                           }
-                        : {
-                              color: "",
-                              state: "blank",
-                          };
+                        : CellState;
                 });
                 return [...pre, rows];
             }, []);
@@ -219,8 +216,8 @@ export const useBlockState = (gameState: GameState) => {
      * 4. 화면 렌더링 및 떨어지는 블록, y축 초기화
      */
     const fixToGrid = (renderArr: BlockType[][]): void => {
-        const fixedBlockArr = renderArr.map((column) =>
-            column.map((row) => ({
+        const fixedBlockArr = renderArr.map<BlockType[]>((column) =>
+            column.map<BlockType>((row) => ({
                 ...row,
                 state: row.state === "drop" ? "fixed" : row.state,
             }))
@@ -239,10 +236,7 @@ export const useBlockState = (gameState: GameState) => {
             if (lineIsFull) {
                 for (let column = 0; column < COLUMN; column++) {
                     fixedBlockArr[column].splice(row, 1);
-                    fixedBlockArr[column].unshift({
-                        color: "",
-                        state: "blank",
-                    });
+                    fixedBlockArr[column].unshift(CellState);
                 }
             }
         }
@@ -290,6 +284,21 @@ export const useBlockState = (gameState: GameState) => {
         });
 
         fixToGrid(renderArr);
+    };
+
+    /**
+     *  게임 종료시 화면 처리 함수
+     */
+
+    const endGame = () => {
+        const endGameRenderArr = renderBlock.map<BlockType[]>((row) =>
+            row.map<BlockType>(({ state }) => ({
+                color: state === "blank" ? "black" : "gray",
+                state: "end",
+            }))
+        );
+
+        return endGameRenderArr;
     };
 
     /**

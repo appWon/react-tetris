@@ -10,7 +10,7 @@ import { Cell } from "../Cell";
 // styled-component
 import * as S from "./blockBoard";
 
-type GameState = "playing" | "stop";
+export type GameState = "playing" | "stop" | "end";
 
 export const BlockBoard = () => {
     const [gameState, setGameState] = useState<GameState>("stop");
@@ -20,9 +20,11 @@ export const BlockBoard = () => {
         setDropToEnd,
         setDropOneBlock,
         setRotateDropBlock,
-    ] = useBlockState(gameState);
+    ] = useBlockState(gameState, setGameState);
 
     const handleKeyUp = ({ code }: KeyboardEvent<HTMLDivElement>) => {
+        if (gameState !== "playing") return;
+
         if (code === "ArrowLeft") {
             setMoveWidth(LEFT_OR_RIGHT.left);
         } else if (code === "ArrowRight") {
