@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 import { LEFT_OR_RIGHT } from "../../constants";
 
 // hooks
@@ -10,50 +10,32 @@ import { Button } from "../Button";
 
 // styled-component
 import * as S from "./blockBoard";
+
+//types
 import { GameState } from "../../types";
 
 export const BlockBoard = () => {
     const [gameState, setGameState] = useState<GameState>("stop");
-    const [
-        renderBlock,
-        setMoveWidth,
-        setDropToEnd,
-        setDropOneBlock,
-        setRotateDropBlock,
-    ] = useBlockState(gameState, setGameState);
-
-    const handleKeyUp = ({ code }: KeyboardEvent<HTMLDivElement>) => {
-        if (gameState !== "playing") return;
-
-        if (code === "ArrowLeft") {
-            setMoveWidth(LEFT_OR_RIGHT.left);
-        } else if (code === "ArrowRight") {
-            setMoveWidth(LEFT_OR_RIGHT.right);
-        } else if (code === "ArrowUp") {
-            setRotateDropBlock();
-        } else if (code === "ArrowDown") {
-            setDropOneBlock();
-        } else if (code === "Space") {
-            setDropToEnd();
-        }
-    };
+    const { renderBlock, blockControl } = useBlockState(
+        gameState,
+        setGameState
+    );
 
     const handleClickGameStart = () => {
         setGameState("playing");
     };
 
     return (
-        <S.BlockBoardContainer
-            tabIndex={0}
-            onKeyUp={(v) => v && handleKeyUp(v)}
-        >
-            {renderBlock.map((v, columnCnt) => (
-                <S.RowCoinatiner key={`column_${columnCnt}`}>
-                    {v.map((v, rowCnt) => (
-                        <Cell key={`row_${rowCnt}`} {...v}></Cell>
-                    ))}
-                </S.RowCoinatiner>
-            ))}
+        <S.BlockBoardContainer tabIndex={0} onKeyUp={blockControl}>
+            <div>
+                {renderBlock.map((v, columnCnt) => (
+                    <S.RowCoinatiner key={`column_${columnCnt}`}>
+                        {v.map((v, rowCnt) => (
+                            <Cell key={`row_${rowCnt}`} {...v}></Cell>
+                        ))}
+                    </S.RowCoinatiner>
+                ))}
+            </div>
             {gameState !== "playing" && (
                 <Button onClick={handleClickGameStart} gameState={gameState} />
             )}

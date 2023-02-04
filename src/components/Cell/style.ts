@@ -8,6 +8,10 @@ export const Container = styled.div`
     width: var(--cell-size);
     height: var(--cell-size);
     background: var(--cell-border-color);
+
+    &:not(&:last-child) {
+        border-bottom: 1px solid gray;
+    }
 `;
 
 export const Cell = styled.div<CellProps>`
