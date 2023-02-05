@@ -1,15 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, KeyboardEvent } from "react";
 
+// 상수
 import {
     ROW,
     COLUMN,
     BLOCK_LIST,
     INIT_POSITION,
     CellState,
+    LEFT_OR_RIGHT,
 } from "../constants";
 
+// helper 함수
+import { check, getDropBlock, setRender } from "../helper";
+
 // type
-import { GameState } from "../components/BlockBoard";
+import { GameState } from "../types";
 import { BlockType, RowWidth, LeftOrRight } from "../types";
 
 export const useBlockState = (gameState: GameState, setGameState: any) => {
@@ -36,7 +41,7 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
         if (gameState !== "playing") return;
 
         const interval = setInterval(() => {
-            setPosition(({ x, y }) => ({ x, y: y + 1 }));
+            setMoveY();
         }, 1000);
 
         return () => {
@@ -52,8 +57,6 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 3. 증복 블럭이 없다면 테트리스 렌더링 타일로 등록
      */
     useEffect(() => {
-        if (gameState === "end") "";
-
         const blockHeight = dropBlock[0]?.length || 0;
 
         if (position.y + blockHeight > ROW) {
@@ -64,20 +67,16 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
         const renderArr =
             gameState === "end" ? endGame() : renderToGrid(position);
 
-        for (let i = 0; i < renderArr.length; i++) {
-            if (renderArr[i].some((v) => v.state === "duplicated")) {
-                if (position.y === 0) {
-                    setGameState("end");
-                    return;
-                }
-
+        if (!check(renderArr)) {
+            if (position.y === 0) {
+                setGameState("end");
+            } else {
                 fixToGrid(renderBlock);
-                return;
             }
         }
 
         setRenderBlock(renderArr);
-    }, [position.y, dropBlock, fixedBlock]);
+    }, [position, dropBlock, fixedBlock]);
 
     /**
      * 떨어지는 블록 좌우 이동시 실행 함수
@@ -86,66 +85,23 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 2. 떨어지는 블록과 x축 계산 후 중복 블록이 있다면 함수 종료
      * 3. 1~2번 항목에 대해 해당사항이 없다면 x축 state 등록 및 화면 렌더링
      */
-    const setMoveWidth = (rightOrLeft: LeftOrRight): void => {
-        const { x, y } = position;
-
-        if (x + rightOrLeft + dropBlock.length >= 13 || x + rightOrLeft < 0) {
+    const setMoveX = (rightOrLeft: LeftOrRight): void => {
+        if (
+            position.x + rightOrLeft + dropBlock.length >= 13 ||
+            position.x + rightOrLeft < 0
+        )
             return;
-        }
 
         const renderingView = renderToGrid({
-            y,
-            x: rightOrLeft + x,
+            y: position.y,
+            x: rightOrLeft + position.x,
         });
 
         for (let i = 0; i < renderingView.length; i++) {
             if (renderingView[i].some((v) => v.state === "duplicated")) return;
         }
 
-        setPosition({ y, x: rightOrLeft + x });
-        setRenderBlock(renderingView);
-    };
-
-    /**
-     * 떨어지는 블록 변경하는 함수
-     * - 과정
-     * 1. 랜덤 색, 상수배열에서 랜덤으로 요소를 가져온다.
-     * 2. 상수에서 가져온 2차원 배열에서 하나의 요소 배열 전체가 0 일 경우 제거
-     * 3. 남은 배열요소에서 0과 1기준 데이터 변환
-     * 4. 떨어지는 블록(DropBlock)에 상태 적용
-     */
-    const changeDropBlock = (): void => {
-        if (gameState !== "playing") return;
-
-        const blockColor = randomColor();
-        const randomBlock = Math.floor(Math.random() * BLOCK_LIST.length);
-        const dropBlock = BLOCK_LIST[randomBlock]
-            .filter((arr) => arr.some((v) => v))
-            .reduce<BlockType[][]>((pre, rowArr) => {
-                const rows = rowArr.map<BlockType>((block) => {
-                    return block === 1
-                        ? {
-                              color: blockColor,
-                              state: "drop",
-                          }
-                        : CellState;
-                });
-                return [...pre, rows];
-            }, []);
-
-        setDropBlock(dropBlock);
-    };
-
-    /**
-     * 랜덤 color 반환함수 (오픈소스)
-     */
-    const randomColor = (): string => {
-        const letters = "0123456789ABCDEF";
-        let color = "#";
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+        setPosition((prev) => ({ ...prev, x: rightOrLeft + prev.x }));
     };
 
     /**
@@ -178,34 +134,29 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 4. 위 과정을 거친후 배열 반환
      */
     const renderToGrid = ({ x, y }: RowWidth): BlockType[][] => {
-        const renderArr: BlockType[][] = fixedBlock.map((row) =>
-            row.map((info) => ({
-                ...info,
-                state: info.state === "drop" ? "blank" : info.state,
-            }))
+        const copyBorder = JSON.parse(JSON.stringify(fixedBlock));
+
+        const filterBlock = dropBlock.filter((arr) =>
+            arr.some(({ state }) => state === "drop")
         );
 
-        dropBlock
-            .filter((arr) => arr.some((v) => v.state === "drop"))
-            .forEach((column, columnI) => {
-                column.forEach((value, rowI) => {
-                    const renderBlockItem = renderArr[columnI + x][rowI + y];
-                    let state = value.state;
-                    let color = value.color;
+        for (let column = 0; column < filterBlock.length; column++) {
+            for (let row = 0; row < filterBlock[0].length; row++) {
+                if (filterBlock[column][row].state === "blank") continue;
 
-                    if (renderBlockItem.state === "fixed") {
-                        color = renderBlockItem.color;
-                        state =
-                            value.state === "blank"
-                                ? renderBlockItem.state
-                                : "duplicated";
-                    }
+                let borderValue = copyBorder[column + x][row + y];
 
-                    renderArr[columnI + x][rowI + y] = { color, state };
-                });
-            });
+                if (borderValue.state === "fixed") {
+                    borderValue.state = "duplicated";
+                    continue;
+                }
 
-        return renderArr;
+                borderValue.state = "drop";
+                borderValue.color = filterBlock[column][row].color;
+            }
+        }
+
+        return copyBorder;
     };
 
     /**
@@ -216,34 +167,14 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 4. 화면 렌더링 및 떨어지는 블록, y축 초기화
      */
     const fixToGrid = (renderArr: BlockType[][]): void => {
-        const fixedBlockArr = renderArr.map<BlockType[]>((column) =>
-            column.map<BlockType>((row) => ({
-                ...row,
-                state: row.state === "drop" ? "fixed" : row.state,
-            }))
-        );
+        const render = setRender(renderArr);
 
-        for (let row = 0; row < ROW; row++) {
-            let lineIsFull = true;
-
-            for (let column = 0; column < COLUMN; column++) {
-                if (fixedBlockArr[column][row].state === "blank") {
-                    lineIsFull = false;
-                    break;
-                }
-            }
-
-            if (lineIsFull) {
-                for (let column = 0; column < COLUMN; column++) {
-                    fixedBlockArr[column].splice(row, 1);
-                    fixedBlockArr[column].unshift(CellState);
-                }
-            }
+        if (gameState === "playing") {
+            setDropBlock(getDropBlock());
         }
 
-        changeDropBlock();
         setPosition(INIT_POSITION);
-        setFixedBlock(fixedBlockArr);
+        setFixedBlock(render);
     };
 
     /**
@@ -255,8 +186,10 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 4. 렌더링 위해 fixToGrid함수에 agument로 반환
      */
     const setDropToEnd = (): void => {
-        const { x } = position;
-        const sliceBlock = renderBlock.slice(x, x + dropBlock.length);
+        const sliceBlock = renderBlock.slice(
+            position.x,
+            position.x + dropBlock.length
+        );
         const findDropBlockArr: number[] = dropBlock.map((row) => {
             return (
                 row.length -
@@ -273,13 +206,13 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
                     )
                     .some((v) => v)
             ) {
-                fixToGrid(renderToGrid({ x, y: i }));
+                fixToGrid(renderToGrid({ x: position.x, y: i }));
                 return;
             }
         }
 
         const renderArr = renderToGrid({
-            x,
+            x: position.x,
             y: 24 - Math.max(...findDropBlockArr),
         });
 
@@ -304,15 +237,31 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
     /**
      * 테트리스 아래로 한칸 움직이는 함수
      */
-    const setDropOneBlock = (): void => {
+    const setMoveY = (): void => {
         setPosition(({ x, y }) => ({ x, y: y + 1 }));
     };
 
-    return [
+    /**
+     * 키 입력 함수
+     */
+    const blockControl = ({ code }: KeyboardEvent<HTMLDivElement>) => {
+        if (gameState !== "playing") return;
+
+        if (code === "ArrowLeft") {
+            setMoveX(LEFT_OR_RIGHT.LEFT);
+        } else if (code === "ArrowRight") {
+            setMoveX(LEFT_OR_RIGHT.RIGHT);
+        } else if (code === "ArrowUp") {
+            setRotateDropBlock();
+        } else if (code === "ArrowDown") {
+            setMoveY();
+        } else if (code === "Space") {
+            setDropToEnd();
+        }
+    };
+
+    return {
         renderBlock,
-        setMoveWidth,
-        setDropToEnd,
-        setDropOneBlock,
-        setRotateDropBlock,
-    ] as const;
+        blockControl,
+    };
 };
