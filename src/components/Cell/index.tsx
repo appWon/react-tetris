@@ -8,6 +8,7 @@ import { BlockType } from "../../types";
 
 export interface CellProps extends BlockType {
     shadowColor?: string;
+    size?: number;
 }
 
 export const Cell = (props: CellProps) => {
@@ -18,7 +19,7 @@ export const Cell = (props: CellProps) => {
     };
 
     return (
-        <S.Container>
+        <S.Container size={props.size}>
             <S.Cell {...props} shadowColor={getShadowColor(props.color)} />
         </S.Container>
     );

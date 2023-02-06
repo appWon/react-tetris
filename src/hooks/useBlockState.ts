@@ -3,11 +3,9 @@ import { useState, useEffect, KeyboardEvent } from "react";
 // 상수
 import {
     ROW,
-    COLUMN,
-    BLOCK_LIST,
     INIT_POSITION,
-    CellState,
     LEFT_OR_RIGHT,
+    INIT_RENDER_ARR,
 } from "../constants";
 
 // helper 함수
@@ -27,11 +25,7 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 처음 테트리스 타일 배열 초기화 Hook
      */
     useEffect(() => {
-        const blockInitTalState = [...Array(COLUMN)].map<BlockType[]>((_) =>
-            [...Array(ROW)].fill(CellState)
-        );
-
-        fixToGrid(blockInitTalState);
+        fixToGrid(INIT_RENDER_ARR);
     }, [gameState]);
 
     /**

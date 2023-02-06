@@ -1,3 +1,4 @@
+// type
 import { BlockType } from "./types";
 
 // 초기 block 센터링
@@ -48,12 +49,28 @@ export const BLOCK_LIST = [
 
 // 좌우 이동 상수
 export const LEFT_OR_RIGHT = {
-    left: -1,
-    right: 1,
+    LEFT: -1,
+    RIGHT: 1,
 } as const;
 
 // 테트리슽 타일 상수
 export const CellState: BlockType = {
-    color: "",
+    color: "black",
     state: "blank",
 };
+
+export const MOVE = {
+    UP: "ArrowUp",
+    DOWN: "ArrowDown",
+    LEFT: "ArrowLeft",
+    RIGHT: "ArrowRight",
+} as const;
+
+export const INIT_GAME_STATE = {
+    state: "stop",
+    position: INIT_POSITION,
+};
+
+export const INIT_RENDER_ARR = [...Array(COLUMN)].map<BlockType[]>((_) =>
+    [...Array(ROW)].fill(CellState)
+);

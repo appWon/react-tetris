@@ -2,11 +2,11 @@ import styled from "styled-components";
 
 import { CellProps } from "./index";
 
-export const Container = styled.div`
+export const Container = styled.div<any>`
     display: flex;
     padding: 0.5px;
-    width: var(--cell-size);
-    height: var(--cell-size);
+    width: ${({ size }) => (size ? "10px" : "var(--cell-size)")};
+    height: ${({ size }) => (size ? "10px" : "var(--cell-size)")};
     background: var(--cell-border-color);
 
     &:not(&:last-child) {
