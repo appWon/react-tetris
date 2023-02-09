@@ -74,3 +74,6 @@ export const INIT_GAME_STATE = {
 export const INIT_RENDER_ARR = [...Array(COLUMN)].map<BlockType[]>((_) =>
     [...Array(ROW)].fill(CellState)
 );
+
+// nextBlock render 갯수 설정
+export const NEXT_BLOCK_LENGTH = 4;
