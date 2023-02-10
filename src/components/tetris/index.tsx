@@ -1,53 +1,30 @@
-import { useState, KeyboardEvent, useEffect, useRef } from "react";
-import { INIT_RENDER_ARR, LEFT_OR_RIGHT } from "../../constants";
+import Raect, { useMemo } from "react";
 
 // hooks
 import { useBlockState } from "../../hooks/useBlockState";
-import { usePlayer } from "../../hooks/usePlayer";
 
 // component
-import { Button } from "../Button";
-import { Border } from "../border";
+import { Player } from "../Player";
+import { MultiPlay } from "../MultiPlay";
 
 // styled-component
 import * as S from "./style";
 
-//types
-import { GameState } from "../../types";
+// hooks
+import { usePlayer } from "../../hooks/usePlayer";
 
 export const Tetris = () => {
-    const [gameState, setGameState] = useState<GameState>("stop");
-
-    const { renderBlock, blockControl } = useBlockState(
-        gameState,
-        setGameState
-    );
+    const { renderBlock, blockControl } = useBlockState();
     const { players } = usePlayer(renderBlock);
-
-    const handleClickGameStart = () => {
-        setGameState("playing");
-    };
 
     return (
         <S.GameConatiner>
-            {Object.keys(players).map((v, i) => (
-                <S.BlockBoardContainer key={i}>
-                    <div>
-                        <Border render={players[v]} size={1} />
-                    </div>
-                </S.BlockBoardContainer>
-            ))}
-            <S.BlockBoardContainer tabIndex={0} onKeyUp={blockControl}>
-                <div>
-                    <Border render={renderBlock} />
-                </div>
-                {gameState !== "playing" && (
-                    <Button
-                        onClick={handleClickGameStart}
-                        gameState={gameState}
-                    />
-                )}
-            </S.BlockBoardContainer>
+            <MultiPlay players={players} />
+            <Player
+                players={players}
+                render={renderBlock}
+                controller={blockControl}
+            />
         </S.GameConatiner>
     );
 };

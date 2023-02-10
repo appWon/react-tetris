@@ -1,16 +1,45 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
 //constance
 import { INIT_RENDER_ARR } from "../constants";
 
 //type
-import { BlockType, Players } from "../types";
+import { BlockType } from "../types";
+import { GameStateType } from "../store/reducer/gameState";
 
-type PropsType = BlockType[][];
+//store
+import { gameState } from "../store/reducer/gameState";
 
-export const usePlayer = (render: PropsType) => {
+export type Type =
+    | "create-session"
+    | "join-session"
+    | "out-session"
+    | "update-session";
+
+export interface OpenSessionType extends GameStateType {
+    type: string;
+    session: string;
+    render: BlockType[][];
+}
+
+export interface ResSockerData {
+    type: Type;
+    userId: string;
+    session: string;
+    data: PlayerTypes[];
+}
+
+export interface PlayerTypes extends GameStateType {
+    id: string;
+    render: BlockType[][];
+}
+
+export const usePlayer = (render: BlockType[][]) => {
     const ws = useRef<WebSocket>();
-    const [players, setPlayers] = useState<Players>({});
+    const gameStates: GameStateType = useSelector(gameState);
+
+    const [players, setPlayers] = useState<PlayerTypes[]>([]);
 
     useEffect(() => {
         ws.current = new WebSocket("ws://127.0.0.1:9000");
@@ -19,11 +48,7 @@ export const usePlayer = (render: PropsType) => {
             if (ws?.current?.readyState !== WebSocket.OPEN) return;
 
             const session = window.location.hash.split("#")[1];
-            const reqData = {} as {
-                type: string;
-                session?: string;
-                render: BlockType[][];
-            };
+            const reqData = <OpenSessionType>{ ...gameStates };
 
             if (session) {
                 reqData["type"] = "join-session";
@@ -41,46 +66,46 @@ export const usePlayer = (render: PropsType) => {
         if (!ws.current) return;
 
         ws.current.onmessage = (e) => {
-            const { type, session, data, userId } = JSON.parse(e.data);
-
-            if (type === "create-session") {
-                window.location.hash = session;
-            }
+            const { type, session, data, userId }: ResSockerData = JSON.parse(
+                e.data
+            );
 
             switch (type) {
                 case "create-session": {
+                    window.location.hash = session;
                     break;
                 }
 
                 case "join-session": {
-                    const setData = data.reduce(
-                        (acc: any, user: any) => ({
-                            ...acc,
-                            [user]: INIT_RENDER_ARR,
-                        }),
-                        {}
-                    );
+                    console.log(data);
+                    const setData = data.map((user) => {
+                        return { ...user, render: INIT_RENDER_ARR };
+                    });
 
-                    setPlayers({ ...players, ...setData });
+                    setPlayers([...players, ...setData]);
                     break;
                 }
 
                 case "out-session": {
-                    const leaveUser = Object.keys(players)
-                        .filter((user) => user !== userId)
-                        .reduce(
-                            (acc, user) => ({ ...acc, [user]: players[user] }),
-                            {} as Players
-                        );
-
+                    const leaveUser = players.filter(
+                        (user) => user.id !== userId
+                    );
                     setPlayers(leaveUser);
                     break;
                 }
 
                 case "update-session": {
-                    for (let i in data) {
-                        setPlayers({ ...players, [i]: data[i] });
-                    }
+                    const parseData = data.reduce(
+                        (acc, user) => ({ ...acc, [user.id]: user }),
+                        {} as { [id: string]: PlayerTypes }
+                    );
+
+                    const setData = players.map((user) => {
+                        return { ...user, ...parseData[user.id] };
+                    });
+
+                    setPlayers(setData);
+                    break;
                 }
             }
         };
@@ -96,11 +121,17 @@ export const usePlayer = (render: PropsType) => {
                 type: "update-session",
                 session,
                 render,
+                isReady: gameStates.isReady,
+                isPlaying: gameStates.isPlaying,
+                gameResult: gameStates.gameResult,
             })
         );
-    }, [render]);
+    }, [
+        render,
+        gameStates.isReady,
+        gameStates.gameResult,
+        gameStates.isPlaying,
+    ]);
 
-    const useSocketClose = () => {};
-
-    return { players, useSocketClose };
+    return { players };
 };

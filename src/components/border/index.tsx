@@ -20,7 +20,12 @@ export const Border = ({ render, size }: BoderProps) => {
             {render.map((v, columnCnt) => (
                 <S.RowCoinatiner key={`column_${columnCnt}`}>
                     {v.map((v, rowCnt) => (
-                        <Cell size={size} key={`row_${rowCnt}`} {...v}></Cell>
+                        <Cell
+                            key={`row_${rowCnt}`}
+                            color={v.color}
+                            state={v.state}
+                            size={size}
+                        ></Cell>
                     ))}
                 </S.RowCoinatiner>
             ))}

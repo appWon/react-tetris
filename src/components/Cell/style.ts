@@ -2,7 +2,11 @@ import styled from "styled-components";
 
 import { CellProps } from "./index";
 
-export const Container = styled.div<any>`
+type ContainerType = {
+    size: string;
+};
+
+export const Container = styled.div<ContainerType>`
     display: flex;
     padding: 0.5px;
     width: ${({ size }) => (size ? "10px" : "var(--cell-size)")};

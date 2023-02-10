@@ -78,3 +78,11 @@ export const setRender = (toBeRenderArr: BlockType[][]) => {
 
     return fixedBlockArr;
 };
+
+export const setGameEnd = (toBeRenderArr: BlockType[][]) => {
+    return toBeRenderArr.map((column) => {
+        return column.map((v) => {
+            return { ...v, color: v.state !== "blank" ? "gray" : v.color };
+        });
+    });
+};

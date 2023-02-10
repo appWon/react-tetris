@@ -1,4 +1,5 @@
 import { useState, useEffect, KeyboardEvent } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 // 상수
 import {
@@ -6,42 +7,55 @@ import {
     INIT_POSITION,
     LEFT_OR_RIGHT,
     INIT_RENDER_ARR,
+    NEXT_BLOCK_LENGTH,
 } from "../constants";
 
 // helper 함수
-import { check, getDropBlock, setRender } from "../helper";
+import { check, getDropBlock, setGameEnd, setRender } from "../helper";
+
+//store
+import { nextBlock, setNextBlocks } from "../store/reducer/nextBlock";
+import {
+    gameState,
+    setPosition,
+    setIsPlaying,
+    setResetPostion,
+    setGameResult,
+} from "../store/reducer/gameState";
 
 // type
-import { GameState } from "../types";
 import { BlockType, RowWidth, LeftOrRight } from "../types";
 
-export const useBlockState = (gameState: GameState, setGameState: any) => {
+export const useBlockState = () => {
+    const dispatch = useDispatch();
+    const { nextBlocks } = useSelector(nextBlock);
+    const { isPlaying, position } = useSelector(gameState);
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
-    const [dropBlock, setDropBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
-    const [position, setPosition] = useState<RowWidth>(INIT_POSITION);
 
     /**
      * 처음 테트리스 타일 배열 초기화 Hook
      */
+
     useEffect(() => {
+        const initDropBlock = [...Array(NEXT_BLOCK_LENGTH)].map((_) =>
+            getDropBlock()
+        );
+
         fixToGrid(INIT_RENDER_ARR);
-    }, [gameState]);
+        dispatch(setNextBlocks(initDropBlock));
+    }, [isPlaying]);
 
     /**
      * 테트리스 1초마다 y축 1씩 떨어트리는 Hook
      */
     useEffect(() => {
-        if (gameState !== "playing") return;
+        if (isPlaying !== "playing") return;
 
-        const interval = setInterval(() => {
-            setMoveY();
-        }, 1000);
+        const interval = setInterval(() => setMoveY(), 1000);
 
-        return () => {
-            clearInterval(interval);
-        };
-    }, [gameState, position.y]);
+        return () => clearInterval(interval);
+    }, [isPlaying, position.y]);
 
     /**
      * position y 상태에 따른 hook
@@ -51,26 +65,30 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 3. 증복 블럭이 없다면 테트리스 렌더링 타일로 등록
      */
     useEffect(() => {
-        const blockHeight = dropBlock[0]?.length || 0;
+        if (isPlaying === "end") return;
+
+        const blockHeight = nextBlocks[0]?.[0].length || 0;
 
         if (position.y + blockHeight > ROW) {
             fixToGrid(renderBlock);
             return;
         }
 
-        const renderArr =
-            gameState === "end" ? endGame() : renderToGrid(position);
+        let renderArr = renderToGrid(position);
 
         if (!check(renderArr)) {
             if (position.y === 0) {
-                setGameState("end");
+                renderArr = setGameEnd(renderArr);
+
+                dispatch(setGameResult("LOSER"));
+                dispatch(setIsPlaying("end"));
             } else {
                 fixToGrid(renderBlock);
             }
         }
 
         setRenderBlock(renderArr);
-    }, [position, dropBlock, fixedBlock]);
+    }, [position, nextBlocks, fixedBlock, isPlaying]);
 
     /**
      * 떨어지는 블록 좌우 이동시 실행 함수
@@ -81,7 +99,7 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      */
     const setMoveX = (rightOrLeft: LeftOrRight): void => {
         if (
-            position.x + rightOrLeft + dropBlock.length >= 13 ||
+            position.x + rightOrLeft + nextBlocks[0].length >= 13 ||
             position.x + rightOrLeft < 0
         )
             return;
@@ -95,28 +113,36 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
             if (renderingView[i].some((v) => v.state === "duplicated")) return;
         }
 
-        setPosition((prev) => ({ ...prev, x: rightOrLeft + prev.x }));
+        dispatch(setPosition({ x: rightOrLeft, y: 0 }));
+    };
+
+    /**
+     * 테트리스 아래로 한칸 움직이는 함수
+     */
+    const setMoveY = (): void => {
+        dispatch(setPosition({ x: 0, y: 1 }));
     };
 
     /**
      * 떨어지는 블록 회전하는 함수
      */
     const setRotateDropBlock = (): void => {
-        const { x, y } = position;
+        const currentBlockSize = nextBlocks[0].length;
 
-        if (dropBlock.length <= 2 && x + dropBlock.length === 12) {
-            if (dropBlock.length === 2) {
-                setPosition({ y, x: x - 1 });
+        if (currentBlockSize <= 2 && position.x + currentBlockSize === 12) {
+            if (currentBlockSize === 2) {
+                dispatch(setPosition({ x: -1, y: 0 }));
             } else {
-                setPosition({ y, x: x - 3 });
+                dispatch(setPosition({ x: -3, y: 0 }));
             }
         }
 
-        const roateBLock90 = dropBlock[0].map((_, index) =>
-            dropBlock.map((row) => row[index]).reverse()
+        const roateBlock = nextBlocks[0][0].map((_, index) =>
+            nextBlocks[0].map((row) => row[index]).reverse()
         );
 
-        setDropBlock(roateBLock90);
+        // dispatch
+        dispatch(setNextBlocks([roateBlock, ...nextBlocks.slice(1)]));
     };
 
     /**
@@ -128,9 +154,10 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 4. 위 과정을 거친후 배열 반환
      */
     const renderToGrid = ({ x, y }: RowWidth): BlockType[][] => {
-        const copyBorder = JSON.parse(JSON.stringify(fixedBlock));
+        if (fixedBlock.length === 0) return [];
 
-        const filterBlock = dropBlock.filter((arr) =>
+        const copyBorder = JSON.parse(JSON.stringify(fixedBlock));
+        const filterBlock = nextBlocks[0].filter((arr) =>
             arr.some(({ state }) => state === "drop")
         );
 
@@ -146,7 +173,10 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
                 }
 
                 borderValue.state = "drop";
-                borderValue.color = filterBlock[column][row].color;
+                borderValue.color =
+                    isPlaying === "stop"
+                        ? "unset"
+                        : filterBlock[column][row].color;
             }
         }
 
@@ -161,14 +191,11 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
      * 4. 화면 렌더링 및 떨어지는 블록, y축 초기화
      */
     const fixToGrid = (renderArr: BlockType[][]): void => {
-        const render = setRender(renderArr);
+        const newNextBlocks = [...nextBlocks.slice(1), getDropBlock()];
 
-        if (gameState === "playing") {
-            setDropBlock(getDropBlock());
-        }
-
-        setPosition(INIT_POSITION);
-        setFixedBlock(render);
+        dispatch(setNextBlocks(newNextBlocks));
+        dispatch(setResetPostion(INIT_POSITION));
+        setFixedBlock(setRender(renderArr));
     };
 
     /**
@@ -182,9 +209,10 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
     const setDropToEnd = (): void => {
         const sliceBlock = renderBlock.slice(
             position.x,
-            position.x + dropBlock.length
+            position.x + nextBlocks[0].length
         );
-        const findDropBlockArr: number[] = dropBlock.map((row) => {
+
+        const findDropBlockArr: number[] = nextBlocks[0].map((row) => {
             return (
                 row.length -
                 [...row].reverse().findIndex((obj) => obj.state === "drop")
@@ -219,9 +247,9 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
 
     const endGame = () => {
         const endGameRenderArr = renderBlock.map<BlockType[]>((row) =>
-            row.map<BlockType>(({ state }) => ({
-                color: state === "blank" ? "black" : "gray",
-                state: "end",
+            row.map<BlockType>((info) => ({
+                ...info,
+                color: info.state === "blank" ? "black" : "gray",
             }))
         );
 
@@ -229,17 +257,10 @@ export const useBlockState = (gameState: GameState, setGameState: any) => {
     };
 
     /**
-     * 테트리스 아래로 한칸 움직이는 함수
-     */
-    const setMoveY = (): void => {
-        setPosition(({ x, y }) => ({ x, y: y + 1 }));
-    };
-
-    /**
      * 키 입력 함수
      */
     const blockControl = ({ code }: KeyboardEvent<HTMLDivElement>) => {
-        if (gameState !== "playing") return;
+        if (isPlaying !== "playing") return;
 
         if (code === "ArrowLeft") {
             setMoveX(LEFT_OR_RIGHT.LEFT);

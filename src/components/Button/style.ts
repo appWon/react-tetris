@@ -1,13 +1,19 @@
 import styled from "styled-components";
 
-export const Button = styled.button`
+type ButtonTypes = {
+    size?: string;
+};
+
+export const Button = styled.button<ButtonTypes>`
     position: absolute;
-    bottom: 10rem;
     color: yellow;
-    font-size: 4rem;
     font-family: "dungGeunMo";
     background: unset;
     border: unset;
+    user-select: none;
+    bottom: 10%;
+    transform: translate(50%, 0);
+    font-size: ${(props) => props.size || "3rem"};
 
     &:hover {
         cursor: pointer;
