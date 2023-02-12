@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 //constance
 import { INIT_RENDER_ARR } from "../constants";
@@ -9,7 +9,7 @@ import { BlockType } from "../types";
 import { GameStateType } from "../store/reducer/gameState";
 
 //store
-import { gameState } from "../store/reducer/gameState";
+import { gameState, setId } from "../store/reducer/gameState";
 
 export type Type =
     | "create-session"
@@ -25,7 +25,7 @@ export interface OpenSessionType extends GameStateType {
 
 export interface ResSockerData {
     type: Type;
-    userId: string;
+    id: string;
     session: string;
     data: PlayerTypes[];
 }
@@ -37,6 +37,7 @@ export interface PlayerTypes extends GameStateType {
 
 export const usePlayer = (render: BlockType[][]) => {
     const ws = useRef<WebSocket>();
+    const dispatch = useDispatch();
     const gameStates: GameStateType = useSelector(gameState);
 
     const [players, setPlayers] = useState<PlayerTypes[]>([]);
@@ -66,13 +67,14 @@ export const usePlayer = (render: BlockType[][]) => {
         if (!ws.current) return;
 
         ws.current.onmessage = (e) => {
-            const { type, session, data, userId }: ResSockerData = JSON.parse(
+            const { type, session, data, id }: ResSockerData = JSON.parse(
                 e.data
             );
 
             switch (type) {
                 case "create-session": {
                     window.location.hash = session;
+                    dispatch(setId(id));
                     break;
                 }
 
@@ -83,13 +85,12 @@ export const usePlayer = (render: BlockType[][]) => {
                     });
 
                     setPlayers([...players, ...setData]);
+                    dispatch(setId(id));
                     break;
                 }
 
                 case "out-session": {
-                    const leaveUser = players.filter(
-                        (user) => user.id !== userId
-                    );
+                    const leaveUser = players.filter((user) => user.id !== id);
                     setPlayers(leaveUser);
                     break;
                 }

@@ -1,5 +1,8 @@
+import React, { useEffect } from "react";
+
 // component
 import { Tetris } from "./components/tetris";
+import { NickName } from "./components/NickName";
 
 function App() {
     return (
@@ -14,6 +17,7 @@ function App() {
                 gap: "20px",
             }}
         >
+            <NickName />
             <Tetris />
         </div>
     );

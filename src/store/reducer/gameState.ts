@@ -12,6 +12,8 @@ export type GameStateType = {
     position: RowWidth;
     isPlaying: GameState;
     isReady: boolean;
+    nickName: string;
+    id: string;
 };
 
 const initialState: GameStateType = {
@@ -19,6 +21,8 @@ const initialState: GameStateType = {
     position: INIT_POSITION,
     isReady: false,
     gameResult: null,
+    nickName: "",
+    id: "",
 };
 
 export const gameStateSlice = createSlice({
@@ -45,6 +49,14 @@ export const gameStateSlice = createSlice({
         setGameResult: (state, action) => {
             state.gameResult = action.payload;
         },
+
+        setId: (state, action) => {
+            state.id = action.payload;
+        },
+
+        setNickName: (state, action) => {
+            state.nickName = action.payload;
+        },
     },
 });
 
@@ -55,6 +67,8 @@ export const {
     setResetPostion,
     setReady,
     setGameResult,
+    setNickName,
+    setId,
 } = gameStateSlice.actions;
 
 // export states
