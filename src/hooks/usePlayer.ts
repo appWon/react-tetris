@@ -79,7 +79,6 @@ export const usePlayer = (render: BlockType[][]) => {
                 }
 
                 case "join-session": {
-                    console.log(data);
                     const setData = data.map((user) => {
                         return { ...user, render: INIT_RENDER_ARR };
                     });

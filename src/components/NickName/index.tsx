@@ -16,8 +16,6 @@ export const NickName = () => {
     useEffect(() => {
         const getNickName = localStorage.getItem("nickName");
 
-        console.log(getNickName);
-
         if (getNickName) dispatch(setNickName(getNickName));
     }, []);
 
