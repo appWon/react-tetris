@@ -1,4 +1,4 @@
-import { useState, useEffect, KeyboardEvent } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // 상수
@@ -25,6 +25,9 @@ import {
 
 // type
 import { BlockType, RowWidth, LeftOrRight } from "../types";
+
+// hooks
+import { useKeyUp } from "./useKeyUp";
 
 export const useBlockState = () => {
     const dispatch = useDispatch();
@@ -89,6 +92,36 @@ export const useBlockState = () => {
 
         setRenderBlock(renderArr);
     }, [position, nextBlocks, fixedBlock, isPlaying]);
+
+    useKeyUp(
+        ({ code }: KeyboardEvent) => {
+            switch (code) {
+                case "ArrowLeft":
+                    setMoveX(LEFT_OR_RIGHT.LEFT);
+                    break;
+
+                case "ArrowRight":
+                    setMoveX(LEFT_OR_RIGHT.RIGHT);
+                    break;
+
+                case "ArrowUp":
+                    setRotateDropBlock();
+                    break;
+
+                case "ArrowDown":
+                    setMoveY();
+                    break;
+
+                case "Space":
+                    setDropToEnd();
+                    break;
+
+                default:
+                    return;
+            }
+        },
+        [isPlaying, renderBlock]
+    );
 
     /**
      * 떨어지는 블록 좌우 이동시 실행 함수
@@ -256,27 +289,7 @@ export const useBlockState = () => {
         return endGameRenderArr;
     };
 
-    /**
-     * 키 입력 함수
-     */
-    const blockControl = ({ code }: KeyboardEvent<HTMLDivElement>) => {
-        if (isPlaying !== "playing") return;
-
-        if (code === "ArrowLeft") {
-            setMoveX(LEFT_OR_RIGHT.LEFT);
-        } else if (code === "ArrowRight") {
-            setMoveX(LEFT_OR_RIGHT.RIGHT);
-        } else if (code === "ArrowUp") {
-            setRotateDropBlock();
-        } else if (code === "ArrowDown") {
-            setMoveY();
-        } else if (code === "Space") {
-            setDropToEnd();
-        }
-    };
-
     return {
         renderBlock,
-        blockControl,
     };
 };

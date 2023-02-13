@@ -14,17 +14,13 @@ import * as S from "./style";
 import { usePlayer } from "../../hooks/usePlayer";
 
 export const Tetris = () => {
-    const { renderBlock, blockControl } = useBlockState();
+    const { renderBlock } = useBlockState();
     const { players } = usePlayer(renderBlock);
 
     return (
         <S.GameConatiner>
             <MultiPlay players={players} />
-            <Player
-                players={players}
-                render={renderBlock}
-                controller={blockControl}
-            />
+            <Player players={players} render={renderBlock} />
         </S.GameConatiner>
     );
 };
