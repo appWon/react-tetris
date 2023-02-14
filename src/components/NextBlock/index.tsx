@@ -17,7 +17,7 @@ export const NextBlock = () => {
 
     return (
         <S.NextBlocksContainer>
-            <p>Next</p>
+            <h3>Next</h3>
             {isPlaying !== "stop" &&
                 nextBlocks.slice(1).map((block, columnCnt) => {
                     return (

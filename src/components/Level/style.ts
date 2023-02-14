@@ -16,7 +16,12 @@ export const LevelContainer = styled.section`
     user-select: none;
     gap: 5px;
 
+    h3 {
+        color: red;
+    }
+
     p {
         font-size: 11px;
+        padding: 5px 0;
     }
 `;
