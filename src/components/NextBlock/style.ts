@@ -5,7 +5,7 @@ export const NextBlocksContainer = styled.div`
     flex-direction: column;
     align-items: center;
     height: 450px;
-    width: 110px;
+    width: 130px;
     padding: 10px;
     border-radius: 10px;
     background-color: black;

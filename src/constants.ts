@@ -77,3 +77,20 @@ export const INIT_RENDER_ARR = [...Array(COLUMN)].map<BlockType[]>((_) =>
 
 // nextBlock render 갯수 설정
 export const NEXT_BLOCK_LENGTH = 4;
+
+// dropBlock Level Speen
+export const DROP_LEVEL_FRAME = {
+    1: 60,
+    2: 50,
+    3: 40,
+    4: 30,
+    5: 20,
+    6: 10,
+    7: 8,
+    8: 6,
+    9: 4,
+    10: 2,
+    11: 1,
+} as { [key: number]: number };
+
+export const INIT_TIME_FRAME = 1;

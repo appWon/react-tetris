@@ -8,6 +8,7 @@ import {
     LEFT_OR_RIGHT,
     INIT_RENDER_ARR,
     NEXT_BLOCK_LENGTH,
+    INIT_TIME_FRAME,
 } from "../constants";
 
 // helper 함수
@@ -21,6 +22,7 @@ import {
     setIsPlaying,
     setResetPostion,
     setGameResult,
+    setTimeFrame,
 } from "../store/reducer/gameState";
 
 // type
@@ -28,6 +30,7 @@ import { BlockType, RowWidth, LeftOrRight } from "../types";
 
 // hooks
 import { useKeyUp } from "./useKeyUp";
+import { useInterval } from "./useInterval";
 
 export const useBlockState = () => {
     const dispatch = useDispatch();
@@ -41,24 +44,14 @@ export const useBlockState = () => {
      */
 
     useEffect(() => {
-        const initDropBlock = [...Array(NEXT_BLOCK_LENGTH)].map((_) =>
+        const INIT_DROP_BLOCK = [...Array(NEXT_BLOCK_LENGTH)].map((_) =>
             getDropBlock()
         );
 
         fixToGrid(INIT_RENDER_ARR);
-        dispatch(setNextBlocks(initDropBlock));
+        dispatch(setNextBlocks(INIT_DROP_BLOCK));
+        dispatch(setTimeFrame(INIT_TIME_FRAME));
     }, [isPlaying]);
-
-    /**
-     * 테트리스 1초마다 y축 1씩 떨어트리는 Hook
-     */
-    useEffect(() => {
-        if (isPlaying !== "playing") return;
-
-        const interval = setInterval(() => setMoveY(), 1000);
-
-        return () => clearInterval(interval);
-    }, [isPlaying, position.y]);
 
     /**
      * position y 상태에 따른 hook
@@ -273,6 +266,11 @@ export const useBlockState = () => {
 
         fixToGrid(renderArr);
     };
+
+    /**
+     * 테트리스 1초마다 y축 1씩 떨어트리는 Hook
+     */
+    useInterval(setMoveY, [isPlaying, position.y]);
 
     /**
      *  게임 종료시 화면 처리 함수

@@ -5,6 +5,8 @@ export const PlayerContainer = styled.section`
     gap: 20px;
 
     & > div {
+        display: flex;
+        flex-direction: column;
         position: relative;
         padding: 10px;
         border-radius: 10px;
@@ -16,6 +18,12 @@ export const PlayerContainer = styled.section`
             left: 50%;
             transform: translate(-50%, 0);
         }
+    }
+
+    & > span {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 `;
 

@@ -18,6 +18,7 @@ import { Button } from "../Button";
 import { Border } from "../Border";
 import { Timer } from "../Timer";
 import { GameResult } from "../GameResult";
+import { Level } from "../Level";
 
 //type
 import { BlockType, GameState } from "../../types";
@@ -95,7 +96,10 @@ export const Player = (props: PlayerType) => {
                     <GameResult gameResult={gameResult} />
                 )}
             </div>
-            <NextBlock />
+            <span>
+                <Level />
+                <NextBlock />
+            </span>
         </S.PlayerContainer>
     );
 };

@@ -14,6 +14,7 @@ export type GameStateType = {
     isReady: boolean;
     nickName: string;
     id: string;
+    timeFrame: number;
 };
 
 const initialState: GameStateType = {
@@ -23,6 +24,7 @@ const initialState: GameStateType = {
     gameResult: null,
     nickName: "",
     id: "",
+    timeFrame: 1,
 };
 
 export const gameStateSlice = createSlice({
@@ -57,6 +59,10 @@ export const gameStateSlice = createSlice({
         setNickName: (state, action) => {
             state.nickName = action.payload;
         },
+
+        setTimeFrame: (state, action) => {
+            state.timeFrame = action.payload;
+        },
     },
 });
 
@@ -69,6 +75,7 @@ export const {
     setGameResult,
     setNickName,
     setId,
+    setTimeFrame,
 } = gameStateSlice.actions;
 
 // export states
