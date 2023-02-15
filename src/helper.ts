@@ -50,19 +50,23 @@ export const check = (border: BlockType[][]) => {
     return true;
 };
 
-export const setRender = (toBeRenderArr: BlockType[][]) => {
-    const fixedBlockArr = toBeRenderArr.map<BlockType[]>((column) =>
+export const setDropToFix = (render: BlockType[][]) => {
+    return render.map<BlockType[]>((column) =>
         column.map<BlockType>((row) => ({
             ...row,
             state: row.state === "drop" ? "fixed" : row.state,
         }))
     );
+};
+
+export const clearLineLength = (render: BlockType[][]) => {
+    let clearLine = 0;
 
     for (let row = 0; row < ROW; row++) {
         let lineIsFull = true;
 
         for (let column = 0; column < COLUMN; column++) {
-            if (fixedBlockArr[column][row].state === "blank") {
+            if (render[column][row].state === "blank") {
                 lineIsFull = false;
                 break;
             }
@@ -70,13 +74,14 @@ export const setRender = (toBeRenderArr: BlockType[][]) => {
 
         if (lineIsFull) {
             for (let column = 0; column < COLUMN; column++) {
-                fixedBlockArr[column].splice(row, 1);
-                fixedBlockArr[column].unshift(CellState);
+                render[column].splice(row, 1);
+                render[column].unshift(CellState);
             }
+            clearLine++;
         }
     }
 
-    return fixedBlockArr;
+    return clearLine;
 };
 
 export const setGameEnd = (toBeRenderArr: BlockType[][]) => {

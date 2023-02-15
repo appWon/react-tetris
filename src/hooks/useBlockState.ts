@@ -12,7 +12,13 @@ import {
 } from "../constants";
 
 // helper 함수
-import { check, getDropBlock, setGameEnd, setRender } from "../helper";
+import {
+    check,
+    clearLineLength,
+    getDropBlock,
+    setDropToFix,
+    setGameEnd,
+} from "../helper";
 
 //store
 import { nextBlock, setNextBlocks } from "../store/reducer/nextBlock";
@@ -23,6 +29,7 @@ import {
     setResetPostion,
     setGameResult,
     setTimeFrame,
+    setScore,
 } from "../store/reducer/gameState";
 
 // type
@@ -35,7 +42,7 @@ import { useInterval } from "./useInterval";
 export const useBlockState = () => {
     const dispatch = useDispatch();
     const { nextBlocks } = useSelector(nextBlock);
-    const { isPlaying, position } = useSelector(gameState);
+    const { isPlaying, position, timeFrame } = useSelector(gameState);
     const [renderBlock, setRenderBlock] = useState<BlockType[][]>([]);
     const [fixedBlock, setFixedBlock] = useState<BlockType[][]>([]);
 
@@ -217,11 +224,29 @@ export const useBlockState = () => {
      * 4. 화면 렌더링 및 떨어지는 블록, y축 초기화
      */
     const fixToGrid = (renderArr: BlockType[][]): void => {
+        const fixedArr = setDropToFix(renderArr);
+        const size = clearLineLength(fixedArr);
         const newNextBlocks = [...nextBlocks.slice(1), getDropBlock()];
 
         dispatch(setNextBlocks(newNextBlocks));
         dispatch(setResetPostion(INIT_POSITION));
-        setFixedBlock(setRender(renderArr));
+
+        switch (size) {
+            case 1:
+                dispatch(setScore(40 * timeFrame));
+                break;
+            case 2:
+                dispatch(setScore(100 * timeFrame));
+                break;
+            case 3:
+                dispatch(setScore(300 * timeFrame));
+                break;
+            case 4:
+                dispatch(setScore(1200 * timeFrame));
+                break;
+        }
+
+        setFixedBlock(fixedArr);
     };
 
     /**
@@ -271,21 +296,6 @@ export const useBlockState = () => {
      * 테트리스 1초마다 y축 1씩 떨어트리는 Hook
      */
     useInterval(setMoveY, [isPlaying, position.y]);
-
-    /**
-     *  게임 종료시 화면 처리 함수
-     */
-
-    const endGame = () => {
-        const endGameRenderArr = renderBlock.map<BlockType[]>((row) =>
-            row.map<BlockType>((info) => ({
-                ...info,
-                color: info.state === "blank" ? "black" : "gray",
-            }))
-        );
-
-        return endGameRenderArr;
-    };
 
     return {
         renderBlock,

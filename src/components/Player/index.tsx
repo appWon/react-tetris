@@ -19,6 +19,7 @@ import { Border } from "../Border";
 import { Timer } from "../Timer";
 import { GameResult } from "../GameResult";
 import { Level } from "../Level";
+import { Score } from "../Score";
 
 //type
 import { BlockType, GameState } from "../../types";
@@ -98,6 +99,7 @@ export const Player = (props: PlayerType) => {
             </div>
             <span>
                 <Level />
+                <Score />
                 <NextBlock />
             </span>
         </S.PlayerContainer>

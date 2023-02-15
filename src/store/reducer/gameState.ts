@@ -15,6 +15,7 @@ export type GameStateType = {
     nickName: string;
     id: string;
     timeFrame: number;
+    score: number;
 };
 
 const initialState: GameStateType = {
@@ -25,6 +26,7 @@ const initialState: GameStateType = {
     nickName: "",
     id: "",
     timeFrame: 1,
+    score: 0,
 };
 
 export const gameStateSlice = createSlice({
@@ -63,6 +65,10 @@ export const gameStateSlice = createSlice({
         setTimeFrame: (state, action) => {
             state.timeFrame = action.payload;
         },
+
+        setScore: (state, action) => {
+            state.score = action.payload;
+        },
     },
 });
 
@@ -76,6 +82,7 @@ export const {
     setNickName,
     setId,
     setTimeFrame,
+    setScore,
 } = gameStateSlice.actions;
 
 // export states
