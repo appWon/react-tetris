@@ -24,18 +24,17 @@ export const getDropBlock = () => {
     const randomBlock = Math.floor(Math.random() * BLOCK_LIST.length);
 
     return BLOCK_LIST[randomBlock]
-        .filter((arr) => arr.some((v) => v))
-        .reduce<BlockType[][]>((pre, rowArr) => {
-            const rows = rowArr.map<BlockType>((block) => {
-                return block === 1
+        .filter((row) => row.some((v) => v))
+        .map((row) =>
+            row.map<BlockType>((cell) =>
+                cell
                     ? {
                           state: "drop",
                           color,
                       }
-                    : CellState;
-            });
-            return [...pre, rows];
-        }, []);
+                    : CellState
+            )
+        );
 };
 
 export const check = (border: BlockType[][]) => {
