@@ -7,25 +7,25 @@ import { Cell } from "../Cell";
 import * as S from "./style";
 
 // type
-import { BlockType } from "../../types";
+import { Board } from "../../types";
 
 type BoderProps = {
-    render: BlockType[][];
+    render: Board;
     size?: number;
+    grid?: boolean;
 };
 
-export const Border = ({ render, size }: BoderProps) => {
+export const Border = (props: BoderProps) => {
     return (
         <>
-            {render.map((v, columnCnt) => (
-                <S.RowCoinatiner key={`column_${columnCnt}`}>
+            {props.render.map((v, columnCnt) => (
+                <S.RowCoinatiner key={`column_${columnCnt}`} grid={props.grid}>
                     {v.map((v, rowCnt) => (
                         <Cell
                             key={`row_${rowCnt}`}
-                            color={v.color}
-                            state={v.state}
-                            size={size}
-                        ></Cell>
+                            color={v}
+                            grid={props.grid}
+                        />
                     ))}
                 </S.RowCoinatiner>
             ))}

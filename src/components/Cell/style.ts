@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { CellProps } from "./index";
 
 type ContainerType = {
-    size: string;
+    size?: string;
+    grid?: boolean;
 };
 
 export const Container = styled.div<ContainerType>`
@@ -14,7 +15,7 @@ export const Container = styled.div<ContainerType>`
     background: var(--cell-border-color);
 
     &:not(&:last-child) {
-        border-bottom: 1px solid gray;
+        border-right: ${({ grid }) => (grid ? "1px solid gray" : "unset")};
     }
 `;
 
