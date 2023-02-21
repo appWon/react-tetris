@@ -51,7 +51,7 @@ spacebar : 블록을 떨어뜨린다.
 
 ```typescript
 // constants.ts
-export const BLOCK_LIST = [
+export const TETROMINO_LIST = [
     [
         [1, 1, 0],
         [0, 1, 1],
@@ -61,27 +61,204 @@ export const BLOCK_LIST = [
 ];
 
 // helpers.ts
-export const getTetromino = ():BlockType[][] => {
+export const getTetromino = () => {
     const color = getRandomColor();
-    const randomBlock = Math.floor(Math.random() * BLOCK_LIST.length);
+    const randomBlock = Math.floor(Math.random() * TETROMINO_LIST.length);
 
-    return BLOCK_LIST[randomBlock]
-        .filter((row) => row.some((v) => v))
-        .map((row) =>
-            row.map<BlockType>((cell) =>
-                cell
-                    ? {
-                          state: "drop",
-                          color,
-                      }
-                    : CellState
-            )
-        );
+    return TETROMINO_LIST[randomBlock].map((row) =>
+        row.map((cell) => cell && color)
+    );
 };
 
 ```
 
 `getTetromino` 함수는 테트리미노 상수의 필요없는 데이터 열 제거 및 게임에 필요한 데이터 형태로 변경합니다.
+
+## 키보드 이벤트
+
+> 테트로미노 조작을 위해서 `useKeyUp` hooks를 생성하여 키보드 이벤트를 처리하였습니다.
+
+```typescript
+// /hooks/useKeyUp.ts
+export const useKeyUp = (
+    callback: (e: KeyboardEvent) => void,
+    deps?: DependencyList
+) => {
+    useEffect(() => {
+        window.addEventListener("keyup", callback);
+        return () => window.removeEventListener("keyup", callback);
+    }, deps);
+};
+```
+
+useKeyUp hooks의 첫번째 인자 callback 함수를 통하여 특정 키 입력 이벤트가 발생할 경우 분기 처리를 하였습니다.
+
+```typescript
+//hooks/useBlockState.ts
+useKeyUp(
+    ({ code }: KeyboardEvent) => {
+        switch (code) {
+            case "ArrowLeft":
+                moveX(position.x + LEFT_OR_RIGHT.LEFT);
+                break;
+
+            case "ArrowRight":
+                moveX(position.x + LEFT_OR_RIGHT.RIGHT);
+                break;
+
+            case "ArrowUp":
+                rotateTetromino();
+                break;
+
+            case "ArrowDown":
+                moveY();
+                break;
+
+            case "Space":
+                hardDrop();
+                break;
+
+            default:
+                return;
+        }
+    },
+    [isPlaying, render]
+);
+```
+
+### 키보드 이벤트 ERROR CASE
+
+키보드 이벤트를 통해 테트리미노를 조작하였을 경우 여러 에러가 발생하였습니다.
+
+-   좌우측 벽을 뚫을 경우
+
+-   바닥을 뚫고 내려갈 경우
+
+-   다른 블록과 중복
+
+### Helper 함수
+
+> 위와 같은 문제를 해결할 수 있는 `checkDuplicated` 함수는 입니다.
+
+```typescript
+//helper.ts
+export const checkDuplicated = (
+    position: RowWidth,
+    tetromino: string[][],
+    render: string[][]
+) => {
+    return tetromino
+        .filter((row) => row.some((v) => v))
+        .some((row, rowIndex) =>
+            row.some((cell, columnIndex) => {
+                const findRender =
+                    render?.[rowIndex + position.y]?.[columnIndex + position.x];
+
+                if (cell && findRender) return true;
+                else if (cell && findRender === undefined) return true;
+            })
+        );
+};
+```
+
+[Optional chaining](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Optional_chaining) 을 통해
+render Array 범위를 벗어 났을 경우 반환하는 undefined 값을 활용하여 에러 케이스 해결할 수 있었습니다.
+
+### 키 입력 이벤트 함수
+
+> ↑ 키 입력을 했을 경우 회전시킵니다.
+
+<img src="https://velog.velcdn.com/images/app235naver/post/af2aeff8-b294-4ec9-875c-680d854b8b54/image.gif" width="200">
+
+[배열 회전 알고리즘](https://stackoverflow.com/questions/15170942/how-to-rotate-a-matrix-in-an-array-in-javascript)을 활용하여 회전 후 중복체크를 하였습니다.
+
+```typescript
+//hooks/useBlockState.ts
+const rotateTetromino = (): void => {
+    const roateTetromino = tetromino[0][0].map((_, index) =>
+        tetromino[0].map((row) => row[index]).reverse()
+    );
+
+    if (checkDuplicated(position, roateTetromino, fixedRender)) {
+        return;
+    }
+
+    dispatch(setTetromino([roateTetromino, ...tetromino.slice(1)]));
+};
+```
+
+> ← → 키 입력을 했을 경우 좌우 이동합니다.
+
+<img src="https://velog.velcdn.com/images/app235naver/post/d7621f4a-14ed-4997-9fdf-813a3820b4bf/image.gif" height="200px">
+
+```typescript
+//hooks/useBlockState.ts
+const moveX = (x: number): void => {
+    if (checkDuplicated({ ...position, x }, tetromino[0], fixedRender)) {
+        return;
+    }
+
+    dispatch(setPosition({ x: x - position.x, y: 0 }));
+};
+```
+
+> ↓ space 키 입력을 했을 경우 tetromino가 떨어 집니다.
+
+<img src="https://velog.velcdn.com/images/app235naver/post/93f68fa5-db30-4d1e-8d07-78b11ee86214/image.gif" width="300px">
+
+soft drop은 다음 1줄만 체크 후 동작하도록 합니다.
+
+```typescript
+//hooks/useBlockState.ts
+const moveY = (): void => {
+    if (!checkMoveY(1)) return;
+
+    dispatch(setPosition({ x: 0, y: 1 }));
+};
+```
+
+hard drop은 동일한 Check 함수를 1씩 증가 시켜가면서 실행한다.
+
+```typescript
+//hooks/useBlockState.ts
+const hardDrop = (): void => {
+    for (let h = 0; h <= ROW; h++) {
+        if (!checkMoveY(h)) break;
+    }
+};
+```
+
+Y축에 사용하는 Check 함수이다. `checkDuplicated`함수를 사용해 중복 체크 후 true 일 경우 tetromino를 board에 적용한다.
+
+board array는 2차원 배열이므로 인덱스에 접근하여 변경하면 원복 객체에도 적용이 되기 때문에 연결을 끊어주는 `깊은 복사`를 진행해야한다.
+
+```typescript
+//hooks/useBlockState.ts
+const checkMoveY = (nextLine: number = 1): boolean => {
+    if (
+        checkDuplicated(
+            { ...position, y: position.y + nextLine },
+            tetromino[0],
+            fixedRender
+        )
+    ) {
+        const copyRender = drawRender(
+            { ...position, y: position.y + nextLine - 1 },
+            tetromino[0],
+            _.cloneDeep(fixedRender)
+        );
+
+        const newNextTetromino = [...tetromino.slice(1), getTetromino()];
+
+        setFixedRender(copyRender);
+        dispatch(setResetPostion(INIT_POSITION));
+        dispatch(setTetromino(newNextTetromino));
+        return false;
+    }
+
+    return true;
+};
+```
 
 ## 렌더링 성능 최적화
 
@@ -89,7 +266,7 @@ export const getTetromino = ():BlockType[][] => {
 
 테트리스 게임은 키보드 입력 및 TimeInterval에 의해 state가 변경되면서 리렌더링이 발생하고 있습니다.
 
-문제는 테트리스 board에는 가로( 12 ) x 세로( 24 ) = 288개의 `<Cell />` 컴포넌트가 위와 같은 이벤트가 발생할 경우 리렌더링이 발생하고 있습니다.
+문제는 테트리스 board에는 `가로( 12 ) x 세로( 24 ) = 288개`의 `<Cell />` 컴포넌트가 위와 같은 이벤트가 발생할 경우 리렌더링이 발생하고 있습니다.
 
 <img src="https://velog.velcdn.com/images/app235naver/post/243d101d-93e9-47f1-845c-f860f1904916/image.gif" width="500">
 
