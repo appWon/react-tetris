@@ -7,28 +7,31 @@ import { Cell } from "../Cell";
 import * as S from "./style";
 
 // type
-import { Board } from "../../types";
+import { Board as BoardType } from "../../types";
 
 type BoderProps = {
-    render: Board;
-    size?: number;
+    render: BoardType;
     grid?: boolean;
+    multi?: boolean;
+    cellSize: number;
 };
 
-export const Border = (props: BoderProps) => {
+export const Board = (props: BoderProps) => {
     return (
-        <>
-            {props.render.map((v, columnCnt) => (
+        <S.BoraderContainer>
+            {props.render.map((row, columnCnt) => (
                 <S.RowCoinatiner key={`column_${columnCnt}`} grid={props.grid}>
-                    {v.map((v, rowCnt) => (
+                    {row.map((color, rowCnt) => (
                         <Cell
                             key={`row_${rowCnt}`}
-                            color={v}
+                            color={color}
                             grid={props.grid}
+                            multi={props.multi}
+                            cellSize={props.cellSize}
                         />
                     ))}
                 </S.RowCoinatiner>
             ))}
-        </>
+        </S.BoraderContainer>
     );
 };
