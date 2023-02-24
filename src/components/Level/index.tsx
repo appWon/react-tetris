@@ -16,7 +16,7 @@ export const Level = () => {
         <S.LevelContainer>
             <h3>LEVEL</h3>
             <h4>{timeFrame}</h4>
-            <p>10초마다 레벨 상승</p>
+            <p>20초마다 레벨 상승</p>
         </S.LevelContainer>
     );
 };

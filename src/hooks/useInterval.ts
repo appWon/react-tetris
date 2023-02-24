@@ -1,4 +1,4 @@
-import React, { DependencyList, useEffect, useRef } from "react";
+import { DependencyList, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // constance
@@ -29,7 +29,7 @@ export const useInterval = (callback: () => void, deps: DependencyList) => {
             if (timeFrame > 11) return;
 
             dispatch(setTimeFrame(timeFrame + 1));
-        }, 10000);
+        }, 20000);
 
         return () => clearInterval(interval);
     }, [isPlaying, timeFrame]);
