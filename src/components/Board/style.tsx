@@ -13,7 +13,6 @@ export const BoraderContainer = styled.div`
 
 export const RowCoinatiner = styled.div<RowCoinatinerType>`
     display: flex;
-    flex: 1 1 auto;
 
     &:not(&:last-child) {
         border-bottom: ${({ grid }) => (grid ? "1px solid gray" : "unset")};

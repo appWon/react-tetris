@@ -11,9 +11,8 @@ import { Board as BoardType } from "../../types";
 
 type BoderProps = {
     render: BoardType;
-    grid?: boolean;
-    multi?: boolean;
     cellSize: number;
+    grid?: boolean;
 };
 
 export const Board = (props: BoderProps) => {
@@ -26,7 +25,6 @@ export const Board = (props: BoderProps) => {
                             key={`row_${rowCnt}`}
                             color={color}
                             grid={props.grid}
-                            multi={props.multi}
                             cellSize={props.cellSize}
                         />
                     ))}

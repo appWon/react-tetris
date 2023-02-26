@@ -1,29 +1,18 @@
-import React from "react";
+import React, { memo } from "react";
 
 // styled-component
 import * as S from "./style";
 
 export interface CellProps {
     color: string;
-    shadowColor?: string;
-    size?: string;
+    cellSize: number;
     grid?: boolean;
 }
 
-export const Cell = (props: CellProps) => {
-    const getShadowColor = (hexColor: string): string => {
-        if (!hexColor) return "unset";
-        const converNumber = parseInt(hexColor.slice(1), 16) - 20000;
-
-        return "#" + converNumber.toString(16);
-    };
-
+export const Cell = memo((props: CellProps) => {
     return (
-        <S.Container size={props.size} grid={props.grid}>
-            <S.Cell
-                color={props.color || "black"}
-                shadowColor={getShadowColor(props.color)}
-            />
+        <S.Container grid={props.grid} cellSize={props.cellSize}>
+            <S.Cell color={props.color || "black"} cellSize={props.cellSize} />
         </S.Container>
     );
-};
+});
