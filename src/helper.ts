@@ -1,12 +1,9 @@
 // constance
-import { BLOCK_LIST, CellState, COLUMN, ROW } from "./constants";
+import { COLUMN, TETROMINO_LIST } from "./constants";
 
 //type
-import { BlockType } from "./types";
+import { Board, Position } from "./types";
 
-/**
- * 랜덤 color 반환함수 (오픈소스)
- */
 export const getRandomColor = (): string => {
     const colorPick = [...Array(3)].map(
         (_) => Math.floor(Math.random() * 155) + 100
@@ -15,78 +12,54 @@ export const getRandomColor = (): string => {
     return `rgb(${colorPick.join(",")})`;
 };
 
-/**
- * dropBlock 정보 세팅 함수
- * constance의 BlockList 배열에서 1에 대한 정보 입력
- */
-export const getDropBlock = () => {
+export const getTetromino = () => {
     const color = getRandomColor();
-    const randomBlock = Math.floor(Math.random() * BLOCK_LIST.length);
+    const randomBlock = Math.floor(Math.random() * TETROMINO_LIST.length);
 
-    return BLOCK_LIST[randomBlock]
-        .filter((row) => row.some((v) => v))
-        .map((row) =>
-            row.map<BlockType>((cell) =>
-                cell
-                    ? {
-                          state: "drop",
-                          color,
-                      }
-                    : CellState
-            )
-        );
-};
-
-export const check = (border: BlockType[][]) => {
-    for (let column = 0; column < border.length; column++) {
-        for (let row = 0; row < border[0].length; row++) {
-            if (border[column][row].state === "duplicated") {
-                return false;
-            }
-        }
-    }
-
-    return true;
-};
-
-export const setDropToFix = (render: BlockType[][]) => {
-    return render.map<BlockType[]>((column) =>
-        column.map<BlockType>((row) => ({
-            ...row,
-            state: row.state === "drop" ? "fixed" : row.state,
-        }))
+    return TETROMINO_LIST[randomBlock].map((row) =>
+        row.map((cell) => cell && color)
     );
 };
 
-export const clearLineLength = (render: BlockType[][]) => {
-    let clearLine = 0;
-
-    for (let row = 0; row < ROW; row++) {
-        let lineIsFull = true;
-
-        for (let column = 0; column < COLUMN; column++) {
-            if (render[column][row].state === "blank") {
-                lineIsFull = false;
-                break;
-            }
-        }
-
-        if (lineIsFull) {
-            for (let column = 0; column < COLUMN; column++) {
-                render[column].splice(row, 1);
-                render[column].unshift(CellState);
-            }
-            clearLine++;
-        }
-    }
-
-    return clearLine;
-};
-
-export const setGameEnd = (toBeRenderArr: BlockType[][]) => {
-    return toBeRenderArr.map((column) => {
-        return column.map((v) => {
-            return { ...v, color: v.state !== "blank" ? "gray" : v.color };
+export const drawRender = (
+    position: Position,
+    tetromino: Board,
+    render: Board
+) => {
+    tetromino
+        .filter((row) => row.some((v) => v))
+        .forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                if (cell) {
+                    render[rowIndex + position.y][columnIndex + position.x] =
+                        cell;
+                }
+            });
         });
-    });
+
+    return render;
 };
+
+export const checkDuplicated = (
+    position: Position,
+    tetromino: Board,
+    render: Board
+) => {
+    return tetromino
+        .filter((row) => row.some((v) => v))
+        .some((row, rowIndex) =>
+            row.some((cell, columnIndex) => {
+                const findRender =
+                    render?.[rowIndex + position.y]?.[columnIndex + position.x];
+
+                if (cell && findRender) return true;
+                else if (cell && findRender === undefined) return true;
+            })
+        );
+};
+
+export const clearLineLength = (render: Board) => {
+    return render.filter((row) => row.every((v) => v)).length;
+};
+
+export const fillCell = (_: unknown) => [...Array(COLUMN)].fill(null);

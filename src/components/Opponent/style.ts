@@ -1,12 +1,20 @@
 import styled from "styled-components";
+import { PlayerTypes } from "../../hooks/usePlayer";
 
-export const MultiPlayContainer = styled.div``;
+export const OppernentContainer = styled.section<{ player: PlayerTypes[] }>`
+    display: ${({ player }) => (player.length ? "flex" : "none")};
+    flex-direction: column;
+    flex-wrap: wrap-reverse;
+    gap: 20px;
+
+    & > div {
+        display: flex;
+    }
+`;
 
 export const BlockBoardContainer = styled.div`
     display: flex;
     position: relative;
-    width: fit-content;
-    height: fit-content;
     justify-content: center;
     padding: 10px;
     border-radius: 10px;
@@ -15,6 +23,7 @@ export const BlockBoardContainer = styled.div`
 
     & > div {
         display: flex;
+        flex-direction: column;
         border: 1px solid gray;
     }
 `;

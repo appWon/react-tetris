@@ -1,29 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // type
-import { BlockType } from "../../types";
+import { Board } from "../../types";
 import { RootState } from "../";
 
 type NextBlock = {
-    nextBlocks: Array<BlockType[][]>;
+    tetromino: Board[];
 };
 
-const initialState: NextBlock = { nextBlocks: [] };
+const initialState: NextBlock = { tetromino: [] };
 
 export const nextBlockSlice = createSlice({
     name: "nextBlock",
     initialState,
     reducers: {
-        setNextBlocks: (state, action) => {
-            state.nextBlocks = action.payload;
+        setTetromino: (state, action) => {
+            state.tetromino = action.payload;
         },
     },
 });
 
 // export actions
-export const { setNextBlocks } = nextBlockSlice.actions;
+export const { setTetromino } = nextBlockSlice.actions;
 
 // export states
-export const nextBlock = (state: RootState) => state.nextBlock;
+export const tetrominoState = (state: RootState) => state.nextBlock;
 
 export default nextBlockSlice.reducer;

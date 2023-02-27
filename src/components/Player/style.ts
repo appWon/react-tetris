@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const PlayerContainer = styled.section`
+export const PlayerContainer = styled.div`
     display: flex;
     gap: 20px;
 
@@ -20,18 +20,17 @@ export const PlayerContainer = styled.section`
         }
     }
 
-    & > span {
+    & > section {
         display: flex;
         flex-direction: column;
         gap: 20px;
     }
 `;
 
-export const BorderContainer = styled.div`
+export const BoardContainer = styled.section`
     display: flex;
+    flex-direction: column;
     position: relative;
-    width: fit-content;
-    height: fit-content;
     justify-content: center;
     border: 1px solid gray;
     background-color: black;

@@ -4,9 +4,8 @@ export const NextBlocksContainer = styled.div`
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    height: 450px;
-    width: 130px;
     padding: 10px;
     border-radius: 10px;
     background-color: black;
@@ -20,17 +19,17 @@ export const NextBlocksContainer = styled.div`
     }
 `;
 
-export const NextBlock = styled.div`
+export const NextBlockList = styled.div`
     display: flex;
     flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+`;
+
+export const NextBlock = styled.div`
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-
-    & > div {
-        border-right: unset !important;
-
-        & > div {
-            border-bottom: unset !important;
-        }
-    }
 `;

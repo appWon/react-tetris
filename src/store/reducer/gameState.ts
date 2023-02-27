@@ -5,11 +5,11 @@ import { INIT_POSITION } from "../../constants";
 
 // type
 import { RootState } from "..";
-import { GameState, RowWidth } from "../../types";
+import { GameState, Position } from "../../types";
 
 export type GameStateType = {
     gameResult: "WINNER" | "LOSER" | null;
-    position: RowWidth;
+    position: Position;
     isPlaying: GameState;
     isReady: boolean;
     nickName: string;

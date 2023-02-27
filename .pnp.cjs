@@ -29,11 +29,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
+            ["@types/lodash", "npm:4.14.191"],\
             ["@types/react", "npm:18.0.26"],\
             ["@types/react-dom", "npm:18.0.10"],\
             ["@types/styled-components", "npm:5.1.26"],\
             ["@vitejs/plugin-react", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:3.0.1"],\
             ["@yarnpkg/sdks", "npm:3.0.0-rc.35"],\
+            ["lodash", "npm:4.17.21"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:18.2.0"],\
             ["react-redux", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:8.0.5"],\
@@ -875,6 +877,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@types/keyv", "npm:3.1.4"],\
             ["@types/node", "npm:18.11.18"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/lodash", [\
+        ["npm:4.14.191", {\
+          "packageLocation": "./.yarn/cache/@types-lodash-npm-4.14.191-67a04a969b-ba0d5434e1.zip/node_modules/@types/lodash/",\
+          "packageDependencies": [\
+            ["@types/lodash", "npm:4.14.191"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -2997,11 +3008,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["reat-tetris", "workspace:."],\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
+            ["@types/lodash", "npm:4.14.191"],\
             ["@types/react", "npm:18.0.26"],\
             ["@types/react-dom", "npm:18.0.10"],\
             ["@types/styled-components", "npm:5.1.26"],\
             ["@vitejs/plugin-react", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:3.0.1"],\
             ["@yarnpkg/sdks", "npm:3.0.0-rc.35"],\
+            ["lodash", "npm:4.17.21"],\
             ["react", "npm:18.2.0"],\
             ["react-dom", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:18.2.0"],\
             ["react-redux", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:8.0.5"],\

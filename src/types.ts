@@ -1,17 +1,16 @@
 import { LEFT_OR_RIGHT, MOVE } from "./constants";
 
-export type BlockType = {
-    color: string;
-    state: "blank" | "fixed" | "drop" | "duplicated" | "end";
-};
+export type Cell = string;
+
+export type Board = Cell[][];
 
 export type Players = {
-    [key: string]: BlockType[][];
+    [key: string]: Board;
 };
 
 export type GameState = "playing" | "stop" | "end";
 
-export type RowWidth = { x: number; y: number };
+export type Position = { x: number; y: number };
 
 export type LeftOrRight = typeof LEFT_OR_RIGHT[keyof typeof LEFT_OR_RIGHT];
 

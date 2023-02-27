@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // styled-component
@@ -15,50 +15,38 @@ import {
 //component
 import { NextBlock } from "../NextBlock";
 import { Button } from "../Button";
-import { Border } from "../Border";
+import { Board } from "../Board";
 import { Timer } from "../Timer";
 import { GameResult } from "../GameResult";
 import { Level } from "../Level";
 import { Score } from "../Score";
 
 //type
-import { BlockType, GameState } from "../../types";
 import { PlayerTypes } from "../../hooks/usePlayer";
 
 type PlayerType = {
     players: PlayerTypes[];
-    render: BlockType[][];
+    render: string[][];
+    randomSession: () => void;
+    newSession: () => void;
 };
 
 export const Player = (props: PlayerType) => {
     const dispatch = useDispatch();
 
     const { isReady, isPlaying, gameResult } = useSelector(gameState);
-    const [trigger, setTrigger] = useState(false);
-
-    useEffect(() => {
-        if (isPlaying === "playing") return;
-
-        const allPlayerIsReady = props.players.every(
-            (player) => player.isReady
-        );
-
-        if (allPlayerIsReady && isReady) {
-            setTrigger(true);
-        }
-    }, [isReady, props.players]);
 
     useEffect(() => {
         if (isPlaying !== "playing") return;
 
-        if (IsPlayersPlayingGame("end")) {
+        if (!IsPlayersState("isPlaying", "playing")) {
             dispatch(setGameResult("WINNER"));
             dispatch(setIsPlaying("end"));
+            dispatch(setReady(false));
         }
     }, [props.players]);
 
     const executeFn = () => {
-        dispatch(setReady(false));
         dispatch(setIsPlaying("playing"));
     };
 
@@ -66,42 +54,49 @@ export const Player = (props: PlayerType) => {
         dispatch(setReady(!isReady));
     };
 
-    const IsPlayersPlayingGame = (state: GameState) => {
-        if (!props.players.length) return false;
-        return props.players.every((player) => player.isPlaying === state);
-    };
+    const IsPlayersState = useCallback(
+        (key: string, value: any) => {
+            return props.players.every((player: any) => player[key] === value);
+        },
+        [props.players]
+    );
 
     return (
         <S.PlayerContainer>
             <div>
-                <S.BorderContainer>
-                    <Border render={props.render} />
-                </S.BorderContainer>
-                {isPlaying !== "playing" &&
-                    !IsPlayersPlayingGame("playing") && (
-                        <Button onClick={handleClickButton}>
-                            <Timer
-                                trigger={trigger}
-                                onSetTrigger={setTrigger}
-                                executeFn={executeFn}
-                            >
-                                {props.players.length === 0
-                                    ? "혼자하기"
-                                    : isReady
-                                    ? "준비해제"
-                                    : "준비하기"}
-                            </Timer>
-                        </Button>
-                    )}
+                <S.BoardContainer>
+                    <Board render={props.render} cellSize={30} grid />
+                </S.BoardContainer>
+
+                {isPlaying !== "playing" && (
+                    <Button onClick={handleClickButton}>
+                        {!props.players.length ? (
+                            !isReady ? (
+                                "시작하기"
+                            ) : (
+                                <Timer executeFn={executeFn} />
+                            )
+                        ) : !isReady ? (
+                            "준비하기"
+                        ) : IsPlayersState("isReady", true) ? (
+                            <Timer executeFn={executeFn} />
+                        ) : (
+                            "해제하기"
+                        )}
+                    </Button>
+                )}
+
                 {isPlaying !== "playing" && (
                     <GameResult gameResult={gameResult} />
                 )}
             </div>
-            <span>
+            <section>
                 <Level />
                 <Score />
                 <NextBlock />
-            </span>
+                <button onClick={props.randomSession}>랜덤매칭</button>
+                <button onClick={props.newSession}>새로만들기</button>
+            </section>
         </S.PlayerContainer>
     );
 };

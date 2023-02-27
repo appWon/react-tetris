@@ -1,5 +1,6 @@
 // type
-import { BlockType } from "./types";
+import { fillCell } from "./helper";
+import { Board } from "./types";
 
 // 초기 block 센터링
 export const INIT_POSITION = { x: 5, y: 0 };
@@ -9,7 +10,7 @@ export const ROW = 24;
 export const COLUMN = 12;
 
 // 블록 모양
-export const BLOCK_LIST = [
+export const TETROMINO_LIST = [
     [
         [0, 0, 0, 0],
         [1, 1, 1, 1],
@@ -54,7 +55,7 @@ export const LEFT_OR_RIGHT = {
 } as const;
 
 // 테트리슽 타일 상수
-export const CellState: BlockType = {
+export const CellState = {
     color: "black",
     state: "blank",
 };
@@ -71,9 +72,7 @@ export const INIT_GAME_STATE = {
     position: INIT_POSITION,
 };
 
-export const INIT_RENDER_ARR = [...Array(COLUMN)].map<BlockType[]>((_) =>
-    [...Array(ROW)].fill(CellState)
-);
+export const INIT_RENDER: Board = [...Array(ROW)].map(fillCell);
 
 // nextBlock render 갯수 설정
 export const NEXT_BLOCK_LENGTH = 4;

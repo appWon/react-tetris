@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 //constance
-import { INIT_RENDER_ARR } from "../constants";
+import { INIT_RENDER } from "../constants";
 
 //type
-import { BlockType } from "../types";
+import { Board } from "../types";
 import { GameStateType } from "../store/reducer/gameState";
 
 //store
@@ -15,12 +15,13 @@ export type Type =
     | "create-session"
     | "join-session"
     | "out-session"
-    | "update-session";
+    | "update-session"
+    | "random-session";
 
 export interface OpenSessionType extends GameStateType {
     type: string;
     session: string;
-    render: BlockType[][];
+    render: Board;
 }
 
 export interface ResSockerData {
@@ -32,10 +33,10 @@ export interface ResSockerData {
 
 export interface PlayerTypes extends GameStateType {
     id: string;
-    render: BlockType[][];
+    render: Board;
 }
 
-export const usePlayer = (render: BlockType[][]) => {
+export const usePlayer = (render: Board) => {
     const ws = useRef<WebSocket>();
     const dispatch = useDispatch();
     const gameStates: GameStateType = useSelector(gameState);
@@ -43,7 +44,9 @@ export const usePlayer = (render: BlockType[][]) => {
     const [players, setPlayers] = useState<PlayerTypes[]>([]);
 
     useEffect(() => {
-        ws.current = new WebSocket("ws://127.0.0.1:9000");
+        ws.current = new WebSocket(
+            "ws://port-0-tetris-server-2-4uvg2mlem225sh.sel3.cloudtype.app/"
+        );
 
         ws.current.onopen = () => {
             if (ws?.current?.readyState !== WebSocket.OPEN) return;
@@ -58,7 +61,7 @@ export const usePlayer = (render: BlockType[][]) => {
                 reqData["type"] = "create-session";
             }
 
-            reqData["render"] = INIT_RENDER_ARR;
+            reqData["render"] = INIT_RENDER;
             ws.current.send(JSON.stringify(reqData));
         };
     }, []);
@@ -80,7 +83,7 @@ export const usePlayer = (render: BlockType[][]) => {
 
                 case "join-session": {
                     const setData = data.map((user) => {
-                        return { ...user, render: INIT_RENDER_ARR };
+                        return { ...user, render: INIT_RENDER };
                     });
 
                     setPlayers([...players, ...setData]);
@@ -105,6 +108,18 @@ export const usePlayer = (render: BlockType[][]) => {
                     });
 
                     setPlayers(setData);
+                    break;
+                }
+
+                case "random-session": {
+                    window.location.hash = session;
+
+                    const setData = data.map((user) => {
+                        return { ...user, render: INIT_RENDER };
+                    });
+
+                    setPlayers([...players, ...setData]);
+                    dispatch(setId(id));
                     break;
                 }
             }
@@ -133,5 +148,29 @@ export const usePlayer = (render: BlockType[][]) => {
         gameStates.isPlaying,
     ]);
 
-    return { players };
+    const randomSession = () => {
+        if (!ws.current) return;
+        setPlayers([]);
+
+        ws.current.send(
+            JSON.stringify({
+                type: "random-session",
+                render: INIT_RENDER,
+            })
+        );
+    };
+
+    const newSession = () => {
+        if (!ws.current) return;
+        setPlayers([]);
+
+        ws.current.send(
+            JSON.stringify({
+                type: "create-session",
+                render: INIT_RENDER,
+            })
+        );
+    };
+
+    return { players, randomSession, newSession };
 };
