@@ -9,7 +9,7 @@ export const Timer = (props: TimerProps) => {
     const intervalRef = useRef<number | undefined>(undefined);
 
     useEffect(() => {
-        intervalRef.current = setInterval(() => {
+        intervalRef.current = window.setInterval(() => {
             setTime((prevTime) => prevTime - 1);
         }, 1000);
     }, []);
@@ -17,10 +17,10 @@ export const Timer = (props: TimerProps) => {
     useEffect(() => {
         if (time === -1 && intervalRef.current) {
             props.executeFn();
-            clearInterval(intervalRef.current);
+            window.clearInterval(intervalRef.current);
         }
 
-        () => clearInterval(intervalRef.current);
+        () => window.clearInterval(intervalRef.current);
     }, [time]);
 
     return <p>{time > 0 ? time : "Start!"}</p>;
