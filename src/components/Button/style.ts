@@ -12,8 +12,9 @@ export const Button = styled.button<ButtonTypes>`
     border: unset;
     user-select: none;
     bottom: 10%;
-    transform: translate(50%, 0);
-    font-size: ${(props) => props.size || "3rem"};
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: ${(props) => props.size || "45px"};
 
     &:hover {
         cursor: pointer;
