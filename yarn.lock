@@ -713,6 +713,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^18.14.2":
+  version: 18.14.2
+  resolution: "@types/node@npm:18.14.2"
+  checksum: 53c07e721f6ae33de71306f6a0b75dae6066a4f55bd5484c93bd59ff25f0c5f004ceafeef509a4d0cb9e24a247efc34d50489bcc1b05a53ecc68e2fc088e65cb
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.7.5
   resolution: "@types/prop-types@npm:15.7.5"
@@ -2559,6 +2566,7 @@ __metadata:
     "@originjs/vite-plugin-federation": ^1.2.1
     "@reduxjs/toolkit": ^1.9.2
     "@types/lodash": ^4.14.191
+    "@types/node": ^18.14.2
     "@types/react": ^18.0.26
     "@types/react-dom": ^18.0.9
     "@types/styled-components": ^5.1.26

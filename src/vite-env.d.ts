@@ -2,4 +2,8 @@
 
 declare module "chatModule/Chat";
 
-declare module "remote_app/Button";
+declare namespace NodeJS {
+    interface ProcessEnv {
+        [key: string]: any;
+    }
+}
