@@ -1,0 +1,5 @@
+[[redirects]]
+from = "/chat/*"
+  to = "https://web-tetris-chat-4uvg2mlem225sh.sel3.cloudtype.app"
+  status = 200
+  force = true
