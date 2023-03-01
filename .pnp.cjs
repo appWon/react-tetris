@@ -31,6 +31,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@originjs/vite-plugin-federation", "npm:1.2.1"],\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
             ["@types/lodash", "npm:4.14.191"],\
+            ["@types/node", "npm:18.14.2"],\
             ["@types/react", "npm:18.0.26"],\
             ["@types/react-dom", "npm:18.0.10"],\
             ["@types/styled-components", "npm:5.1.26"],\
@@ -916,6 +917,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-18.11.18-d61e8a4a20-03f17f9480.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:18.11.18"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:18.14.2", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-18.14.2-ba0496d563-53c07e721f.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:18.14.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3041,6 +3049,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@originjs/vite-plugin-federation", "npm:1.2.1"],\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
             ["@types/lodash", "npm:4.14.191"],\
+            ["@types/node", "npm:18.14.2"],\
             ["@types/react", "npm:18.0.26"],\
             ["@types/react-dom", "npm:18.0.10"],\
             ["@types/styled-components", "npm:5.1.26"],\
@@ -3630,7 +3639,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["vite", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:4.0.4"],\
             ["@types/less", null],\
-            ["@types/node", null],\
+            ["@types/node", "npm:18.14.2"],\
             ["@types/sass", null],\
             ["@types/stylus", null],\
             ["@types/sugarss", null],\

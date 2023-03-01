@@ -3,8 +3,6 @@ import react from "@vitejs/plugin-react";
 import federation from "@originjs/vite-plugin-federation";
 
 export default defineConfig(({ mode }) => {
-    const { VITE_CHAT_MODULE_SERVER } = loadEnv(mode, ".");
-
     return {
         plugins: [
             react(),
@@ -23,11 +21,14 @@ export default defineConfig(({ mode }) => {
         server: {
             proxy: {
                 "/chat": {
-                    target: VITE_CHAT_MODULE_SERVER,
+                    target: process.env.VITE_CHAT_MODULE_SERVER,
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/chat/, ""),
                 },
             },
+        },
+        define: {
+            "process.env": loadEnv(mode, "."),
         },
     };
 });

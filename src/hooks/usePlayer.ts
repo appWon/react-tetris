@@ -44,7 +44,7 @@ export const usePlayer = (render: Board) => {
     const [players, setPlayers] = useState<PlayerTypes[]>([]);
 
     useEffect(() => {
-        ws.current = new WebSocket(import.meta.env.VITE_SOCKET_SERVER);
+        ws.current = new WebSocket(process.env.VITE_SOCKET_SERVER);
 
         ws.current.onopen = () => {
             if (ws?.current?.readyState !== WebSocket.OPEN) return;

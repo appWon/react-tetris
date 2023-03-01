@@ -1,5 +1,5 @@
 [[redirects]]
 from = "/chat/*"
-  to = "https://web-tetris-chat-4uvg2mlem225sh.sel3.cloudtype.app"
+  to = "https://web-tetris-chat-4uvg2mlem225sh.sel3.cloudtype.app/:splat"
   status = 200
   force = true
