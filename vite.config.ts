@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
             react(),
             federation({
                 remotes: {
-                    chatModule: VITE_CHAT_MODULE_SERVER,
+                    chatModule: "/chat/assets/remoteEntry.js",
                 },
                 shared: ["react", "react-dom"],
             }),
@@ -19,6 +19,15 @@ export default defineConfig(({ mode }) => {
             target: "esnext",
             modulePreload: true,
             minify: false,
+        },
+        server: {
+            proxy: {
+                "/chat": {
+                    target: VITE_CHAT_MODULE_SERVER,
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/chat/, ""),
+                },
+            },
         },
     };
 });
