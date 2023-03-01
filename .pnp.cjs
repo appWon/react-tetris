@@ -28,6 +28,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
+            ["@originjs/vite-plugin-federation", "npm:1.2.1"],\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
             ["@types/lodash", "npm:4.14.191"],\
             ["@types/react", "npm:18.0.26"],\
@@ -762,6 +763,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@originjs/vite-plugin-federation", [\
+        ["npm:1.2.1", {\
+          "packageLocation": "./.yarn/cache/@originjs-vite-plugin-federation-npm-1.2.1-8606087cdc-03d2199076.zip/node_modules/@originjs/vite-plugin-federation/",\
+          "packageDependencies": [\
+            ["@originjs/vite-plugin-federation", "npm:1.2.1"],\
+            ["estree-walker", "npm:3.0.3"],\
+            ["magic-string", "npm:0.27.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@reduxjs/toolkit", [\
         ["npm:1.9.2", {\
           "packageLocation": "./.yarn/cache/@reduxjs-toolkit-npm-1.9.2-69e0fa940a-8eac4fb65a.zip/node_modules/@reduxjs/toolkit/",\
@@ -847,6 +859,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-emscripten-npm-1.39.6-c9c4021365-437f2f9cdf.zip/node_modules/@types/emscripten/",\
           "packageDependencies": [\
             ["@types/emscripten", "npm:1.39.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/estree", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/@types-estree-npm-1.0.0-eddde5b631-910d97fb70.zip/node_modules/@types/estree/",\
+          "packageDependencies": [\
+            ["@types/estree", "npm:1.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1804,6 +1825,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/esprima-npm-4.0.1-1084e98778-b45bc805a6.zip/node_modules/esprima/",\
           "packageDependencies": [\
             ["esprima", "npm:4.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["estree-walker", [\
+        ["npm:3.0.3", {\
+          "packageLocation": "./.yarn/cache/estree-walker-npm-3.0.3-0372979673-a65728d572.zip/node_modules/estree-walker/",\
+          "packageDependencies": [\
+            ["estree-walker", "npm:3.0.3"],\
+            ["@types/estree", "npm:1.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3007,6 +3038,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["reat-tetris", "workspace:."],\
+            ["@originjs/vite-plugin-federation", "npm:1.2.1"],\
             ["@reduxjs/toolkit", "virtual:c203febda1ec2b6889f9284ca780534833f6a71ba7b42b3a8067e15f777f3c6c16750a432be97113afa2a449e0b41bfae0706f5041ba9799ac32c1333e789e90#npm:1.9.2"],\
             ["@types/lodash", "npm:4.14.191"],\
             ["@types/react", "npm:18.0.26"],\

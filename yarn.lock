@@ -587,6 +587,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@originjs/vite-plugin-federation@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@originjs/vite-plugin-federation@npm:1.2.1"
+  dependencies:
+    estree-walker: ^3.0.2
+    magic-string: ^0.27.0
+  checksum: 03d2199076493357ef1b9fd0ea5aaf559d210b4c0f76ecb84352ec44c5f7c8a350fe4dbb37ee3d7a9b5d9f66c9b87d58dc257c05ffaed3ebf8542a945cbf7b64
+  languageName: node
+  linkType: hard
+
 "@reduxjs/toolkit@npm:^1.9.2":
   version: 1.9.2
   resolution: "@reduxjs/toolkit@npm:1.9.2"
@@ -653,6 +663,13 @@ __metadata:
   version: 1.39.6
   resolution: "@types/emscripten@npm:1.39.6"
   checksum: 437f2f9cdfd9057255662508fa9a415fe704ba484c6198f3549c5b05feebcdcd612b1ec7b10026d2566935d05d3c36f9366087cb42bc90bd25772a88fcfc9343
+  languageName: node
+  linkType: hard
+
+"@types/estree@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/estree@npm:1.0.0"
+  checksum: 910d97fb7092c6738d30a7430ae4786a38542023c6302b95d46f49420b797f21619cdde11fa92b338366268795884111c2eb10356e4bd2c8ad5b92941e9e6443
   languageName: node
   linkType: hard
 
@@ -1503,6 +1520,15 @@ __metadata:
     esparse: ./bin/esparse.js
     esvalidate: ./bin/esvalidate.js
   checksum: b45bc805a613dbea2835278c306b91aff6173c8d034223fa81498c77dcbce3b2931bf6006db816f62eacd9fd4ea975dfd85a5b7f3c6402cfd050d4ca3c13a628
+  languageName: node
+  linkType: hard
+
+"estree-walker@npm:^3.0.2":
+  version: 3.0.3
+  resolution: "estree-walker@npm:3.0.3"
+  dependencies:
+    "@types/estree": ^1.0.0
+  checksum: a65728d5727b71de172c5df323385755a16c0fdab8234dc756c3854cfee343261ddfbb72a809a5660fac8c75d960bb3e21aa898c2d7e9b19bb298482ca58a3af
   languageName: node
   linkType: hard
 
@@ -2530,6 +2556,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "reat-tetris@workspace:."
   dependencies:
+    "@originjs/vite-plugin-federation": ^1.2.1
     "@reduxjs/toolkit": ^1.9.2
     "@types/lodash": ^4.14.191
     "@types/react": ^18.0.26
