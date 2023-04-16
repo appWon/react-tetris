@@ -1,10 +1,10 @@
+# 리엑트리스
+
 ## 데모 영상
 
-> 싱글 플레이
+### 싱글 플레이
 
  <img src="https://velog.velcdn.com/images/app235naver/post/cbaf9dad-f81b-4e45-9270-eaea9361f74c/image.gif" width="300px">
-
-> 멀티 플레이
 
 ## 사용법
 
@@ -228,9 +228,7 @@ const hardDrop = (): void => {
 };
 ```
 
-Y축에 사용하는 Check 함수이다. `checkDuplicated`함수를 사용해 중복 체크 후 true 일 경우 tetromino를 board에 적용한다.
-
-board array는 2차원 배열이므로 인덱스에 접근하여 변경하면 원복 객체에도 적용이 되기 때문에 연결을 끊어주는 `깊은 복사`를 진행해야한다.
+Y축에 사용하는 Check 함수이다. `checkDuplicated`함수를 사용해 중복 체크 후 true 일 경우 tetromino를 board에 적용한다. board array는 2차원 배열이므로 인덱스에 접근하여 변경하면 원복 객체에도 적용이 되기 때문에 연결을 끊어주는 `깊은 복사`를 진행해야한다.
 
 ```typescript
 //hooks/useBlockState.ts
@@ -266,9 +264,7 @@ const checkMoveY = (nextLine: number = 1): boolean => {
 
 <img src="https://velog.velcdn.com/images/app235naver/post/4d97549c-d469-4233-b7a1-b249e0a8ee23/image.png" width="200">
 
-테트리스 게임은 키보드 입력 및 TimeInterval에 의해 state가 변경되면서 리렌더링이 발생하고 있습니다.
-
-문제는 테트리스 board에는 `가로( 12 ) x 세로( 24 ) = 288개`의 `<Cell />` 컴포넌트가 위와 같은 이벤트가 발생할 경우 리렌더링이 발생하고 있습니다.
+테트리스 게임은 키보드 입력 및 TimeInterval에 의해 state가 변경되면서 리렌더링이 발생하고 있습니다. 문제는 테트리스 board에는 `가로( 12 ) x 세로( 24 ) = 288개`의 `<Cell />` 컴포넌트가 위와 같은 이벤트가 발생할 경우 리렌더링이 발생하고 있습니다.
 
 <img src="https://velog.velcdn.com/images/app235naver/post/243d101d-93e9-47f1-845c-f860f1904916/image.gif" width="500">
 
@@ -276,8 +272,8 @@ const checkMoveY = (nextLine: number = 1): boolean => {
 
 테트리스 게임의 `<Cell>`컴포넌트는 2가지 상태를 가집니다.
 
-1. 테트리미노에 의해 채워져 있는 경우
-2. 비워져 있는 경우
+> 1. 테트리미노에 의해 채워져 있는 경우
+> 2. 비워져 있는 경우
 
 위와 같은 상태는 라인 클리어, 게임 초기화 이벤트가 아니라면 동일한 props를 받기 때문에 `React.memo`를 사용하여 렌더링 최적화를 진행하였습니다.
 
@@ -296,11 +292,7 @@ const checkMoveY = (nextLine: number = 1): boolean => {
 
 ### 2. Don't use css in JS
 
-테트리스를 만들면서 느낀것은 javascript에서 css라이브러리를 사용하지 말아야 합니다.
-
-CSS in JS 라이브러리를 사용하면 스타일에 대한 코드량과 효율은 좋아지지만, 퍼포먼스적으로는 많이 떨어집니다.
-
-저는 테트리스 개발에 CSS in JS 라이브러리 중 styled-components를 사용하기전과 후의 이벤트 렌더링 시간을 측정해봤습니다.
+테트리스를 만들면서 느낀것은 javascript에서 css라이브러리를 사용하지 말아야 합니다. CSS in JS 라이브러리를 사용하면 스타일에 대한 코드량과 효율은 좋아지지만, 퍼포먼스적으로는 많이 떨어집니다. 저는 테트리스 개발에 CSS in JS 라이브러리 중 styled-components를 사용하기전과 후의 이벤트 렌더링 시간을 측정해봤습니다.
 
 <div   style="display:flex;" >
 <img src="https://velog.velcdn.com/images/app235naver/post/3f6ef963-f995-44f7-8d81-08f07a8125ff/image.png" width="250">
@@ -311,9 +303,7 @@ CSS in JS 라이브러리를 사용하면 스타일에 대한 코드량과 효�
 
 styled-components를 사용하면 라이브러리 내부적으로 많은 과정을 거치게 됩니다.
 
-1. style 클래스를 중복되는 않는 값으로 해싱 후 생성 및 적용
-2. nesting 기능 등... 위해 [`Stylis.js`](https://www.npmjs.com/package/stylis) 라이브러리 사용
+> 1. style 클래스를 중복되는 않는 값으로 해싱 후 생성 및 적용
+> 2. nesting 기능 등... 위해 [`Stylis.js`](https://www.npmjs.com/package/stylis) 라이브러리 사용
 
-위와 같은 작업으로 인해 높은 퍼포먼스를 보여줘야하는 프로젝트에서는 오히려 마이너스 효과를 주게되었습니다.
-
-마지막으로... 더 높은 퍼포먼스를 나오기 위해선 react.js가 아닌 `vanila javascript` 로만 구현면될거 같습니다.
+위와 같은 작업으로 인해 높은 퍼포먼스를 보여줘야하는 프로젝트에서는 오히려 마이너스 효과를 주게되었습니다. 마지막으로... 더 높은 퍼포먼스를 나오기 위해선 react.js가 아닌 `vanila javascript` 로만 구현면될거 같습니다.
