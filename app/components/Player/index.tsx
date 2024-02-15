@@ -9,7 +9,7 @@ import {
 } from "../../store/reducer/gameState";
 
 import { NextBlock } from "../NextBlock";
-import { Button } from "../Button";
+import { Button } from "../atoms/Button";
 import { Board } from "../Board";
 import { Timer } from "../Timer";
 import { GameResult } from "../GameResult";

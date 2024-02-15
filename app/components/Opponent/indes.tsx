@@ -1,5 +1,5 @@
 import { Board } from "../Board";
-import { Button } from "../Button";
+import { Button } from "../atoms/Button";
 import { GameResult } from "../GameResult";
 
 import { PlayerTypes } from "../../hooks/usePlayer";
