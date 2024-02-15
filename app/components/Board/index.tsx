@@ -1,6 +1,6 @@
 import { Board as BoardType } from "../../types";
 
-import { Cell } from "../Cell";
+import { Cell } from "../atoms/Cell";
 
 type BoderProps = {
   render: BoardType;
