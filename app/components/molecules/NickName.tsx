@@ -1,4 +1,5 @@
 "use client"
+
 import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -27,13 +28,13 @@ export const NickName = () => {
   return (
     <>
       {!nickName && (
-        <div className="flex absolute items-center justify-center w-screen h-screen bg-[rgba(0, 0, 0, 0.5)]">
-          <section className="flex justify-center items-center p-[20px] gap-[10px] rounded-[10px] bg-[rgba(0, 0, 0)] clor-[white]">
+        <div className="flex absolute items-center justify-center w-screen h-screen bg-[#00000080] z-[10]">
+          <section className="flex justify-center items-center p-[20px] gap-[10px] rounded-[10px] bg-[#000000] clor-[white]">
             <form
               className="flex items-center gap-[10px]"
               onSubmit={handleSubmit}
             >
-              <h4>닉네임</h4>
+              <h4 className="text-white">닉네임</h4>
               <div className="flex items-center">
                 <input
                   className="w-full p-[5px] border-none text-right"
@@ -42,7 +43,7 @@ export const NickName = () => {
                   onChange={({ target }) => setText(target.value)}
                 />
               </div>
-              <button className="text-xl border-none p-[2px] bg-white cursor-pointer">
+              <button className="text-xl border-none p-[2px] bg-none cursor-pointer text-white">
                 Click
               </button>
             </form>
