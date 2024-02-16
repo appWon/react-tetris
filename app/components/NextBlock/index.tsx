@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { tetrominoState } from "../../store/reducer/nextBlock";
 import { gameState } from "../../store/reducer/gameState";
 
-import { Board } from "../Board";
+import { Board } from "../molecules/Board";
 
 export const NextBlock = () => {
   const { tetromino } = useSelector(tetrominoState);

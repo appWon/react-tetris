@@ -1,4 +1,4 @@
-import { Board } from "../Board";
+import { Board } from "../molecules/Board";
 import { Button } from "../atoms/Button";
 import { GameResult } from "../GameResult";
 
