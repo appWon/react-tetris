@@ -8,7 +8,7 @@ export type MultiPlayType = {
   players: PlayerTypes[];
 };
 
-export const Oppernent = ({ players }: MultiPlayType) => {
+export const OtherUser = ({ players }: MultiPlayType) => {
   return (
     <div
       className={`${
