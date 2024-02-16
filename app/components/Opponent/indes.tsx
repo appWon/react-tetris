@@ -1,6 +1,6 @@
 import { Board } from "../molecules/Board";
 import { Button } from "../atoms/Button";
-import { GameResult } from "../GameResult";
+import { GameResult } from "../atoms/GameResult";
 
 import { PlayerTypes } from "../../hooks/usePlayer";
 
